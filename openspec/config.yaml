@@ -1,0 +1,21 @@
+schema: spec-driven
+
+context: |
+  cAdvent 2026: a first-person 3D advent calendar game (hub hall + 24 portal games).
+  Code is C17 with SDL3 and OpenGL 3.3 Core / OpenGL ES 3.0 (WebGL2); no C++.
+  Targets: Windows, Linux, Web (Emscripten) and WebXR; web switches to touch on mobile.
+  Simulation code must be deterministic and free of SDL/GL calls.
+  Every requirement scenario must map to an automated test (unit or game test).
+  Unit-test line coverage gate is 95 % (branch 85 %) over src/ and tools/.
+  All work lands on the main branch.
+  Code is MIT; art/audio/maps in assets/ are CC BY 4.0.
+  Portals are original homages: never reuse names, characters, levels, art,
+  sounds or music of the games that inspired them.
+  Concept documents live in docs/concept/.
+
+rules:
+  proposal:
+    - State which portal(s) or engine kits are affected
+    - State what is out of scope (Core vs Garnish)
+  tasks:
+    - Every implementation task has a matching test task

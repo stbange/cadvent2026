@@ -1,0 +1,10 @@
+/build/
+/out/
+*.o
+*.obj
+*.gcda
+*.gcno
+*.gcov
+coverage/
+node_modules/
+.DS_Store
