@@ -1,9 +1,10 @@
 # LeakSanitizer suppressions for code we do not own.
-# Mesa's EGL/llvmpipe driver keeps a few process-lifetime allocations made
-# while SDL initialises the offscreen EGL display (frames below are in the
-# driver, which has no symbols).
+# Mesa's EGL/llvmpipe driver keeps process-lifetime allocations made while SDL
+# initialises the offscreen EGL display (frames below are in the driver, which
+# has no symbols because Mesa is dlopen'ed and unloaded at exit).
 leak:SDL_EGL_InitializeOffscreen
-# Indirect allocations the driver makes during draw calls hang off the EGL
-# display above. cadv_renderer_frame itself never allocates; anything below it
-# is inside the GL driver (unsymbolised because Mesa is dlopen'ed and unloaded).
-leak:cadv_renderer_frame
+# The driver's own allocations during draw calls hang off that display. The
+# functions below only issue GL draw calls and never allocate themselves.
+leak:cadv_gpu_mesh_draw
+leak:draw_sprite_range
+leak:post_pass

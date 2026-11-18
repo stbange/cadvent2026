@@ -2,7 +2,10 @@
 # Strict warnings for first-party code.
 function(cadv_strict_warnings target)
   if(MSVC)
-    target_compile_options(${target} PRIVATE /W4 /permissive- /D_CRT_SECURE_NO_WARNINGS)
+    # /W4 minus the int<->float conversion family (explicit casts everywhere
+    # would hurt readability of the math code; GCC/Clang -Wall still applies).
+    target_compile_options(${target} PRIVATE /W4 /permissive- /D_CRT_SECURE_NO_WARNINGS
+      /wd4244 /wd4267 /wd4305 /wd4127 /wd4204)
     if(CADV_WERROR)
       target_compile_options(${target} PRIVATE /WX)
     endif()

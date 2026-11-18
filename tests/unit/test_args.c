@@ -26,6 +26,9 @@ static void test_defaults(void)
     TEST_ASSERT_EQUAL_INT(0, g_args.frames);
     TEST_ASSERT_NULL(g_args.screenshot);
     TEST_ASSERT_EQUAL_INT(CADV_LOG_INFO, g_args.log_level);
+    TEST_ASSERT_EQUAL_INT(225, g_args.internal_height);
+    TEST_ASSERT_EQUAL_INT(0, g_args.portal);
+    TEST_ASSERT_FALSE(g_args.headless);
 }
 
 static void test_all_options(void)
@@ -81,6 +84,42 @@ static void test_rejects_bad_values(void)
     TEST_ASSERT_EQUAL_INT(CADV_ARGS_ERROR, g_status);
 }
 
+static void test_new_options(void)
+{
+    PARSE("--headless", "--unlock-all", "--portal", "7", "--script", "s.gts", "--save", "x.sav",
+          "--seed", "42", "--max-ticks", "1000", "--internal-height", "180", "--date",
+          "2026-12-05T20:00");
+    TEST_ASSERT_EQUAL_INT(CADV_ARGS_RUN, g_status);
+    TEST_ASSERT_TRUE(g_args.headless);
+    TEST_ASSERT_TRUE(g_args.unlock_all);
+    TEST_ASSERT_EQUAL_INT(7, g_args.portal);
+    TEST_ASSERT_EQUAL_STRING("s.gts", g_args.script);
+    TEST_ASSERT_EQUAL_STRING("x.sav", g_args.save_path);
+    TEST_ASSERT_EQUAL_UINT(42, g_args.seed);
+    TEST_ASSERT_EQUAL_INT(1000, g_args.max_ticks);
+    TEST_ASSERT_EQUAL_INT(180, g_args.internal_height);
+    TEST_ASSERT_TRUE(g_args.has_date);
+    TEST_ASSERT_EQUAL_INT(20, g_args.date.hour);
+    PARSE("--portal", "25");
+    TEST_ASSERT_EQUAL_STRING("invalid portal: 25", g_args.error);
+    PARSE("--date", "2026-13-01");
+    TEST_ASSERT_EQUAL_STRING("invalid date: 2026-13-01", g_args.error);
+}
+
+static void test_url_query(void)
+{
+    cadv_args_apply_query(&g_args, NULL);
+    TEST_ASSERT_FALSE(g_args.unlock_all);
+    cadv_args_apply_query(&g_args, "?foo=1&dev=unlockall&date=2026-12-24&portal=3&portal=99&date=bad");
+    TEST_ASSERT_TRUE(g_args.unlock_all);
+    TEST_ASSERT_TRUE(g_args.has_date);
+    TEST_ASSERT_EQUAL_INT(24, g_args.date.day);
+    TEST_ASSERT_EQUAL_INT(3, g_args.portal);
+    cadv_args_defaults(&g_args);
+    cadv_args_apply_query(&g_args, "portal=2&&xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    TEST_ASSERT_EQUAL_INT(2, g_args.portal);
+}
+
 static void test_rejects_missing_value_and_unknown(void)
 {
     PARSE("--width");
@@ -98,6 +137,8 @@ int main(void)
     RUN_TEST(test_log_levels);
     RUN_TEST(test_help_and_version_exit_ok);
     RUN_TEST(test_rejects_bad_values);
+    RUN_TEST(test_new_options);
+    RUN_TEST(test_url_query);
     RUN_TEST(test_rejects_missing_value_and_unknown);
     return UNITY_END();
 }

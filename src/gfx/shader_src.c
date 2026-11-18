@@ -24,6 +24,9 @@ size_t cadv_shader_build(char *out, size_t cap, cadv_gl_profile profile,
     static const char gles[] = "#version 300 es\n"
                                "precision highp float;\n"
                                "precision highp int;\n"
+                               "precision highp sampler3D;\n"
+                               "precision highp sampler2DShadow;\n"
+                               "precision highp samplerCubeShadow;\n"
                                "#define CADV_GLES 1\n";
     const char *pre = profile == CADV_GL_ES_30 ? gles : desktop;
     const char *st = stage == CADV_SHADER_VERTEX ? "#define CADV_VERTEX 1\n"

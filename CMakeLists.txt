@@ -27,12 +27,42 @@ include(CadvWarnings)
 add_library(cadv_core STATIC
   src/core/arena.c
   src/core/args.c
+  src/core/calendar.c
+  src/core/clock.c
+  src/core/kvstore.c
+  src/core/mathx.c
   src/core/hash.c
   src/core/image.c
   src/core/log.c
   src/core/rng.c
-  src/gfx/shader_src.c)
+  src/audio/audio.c
+  src/input/input.c
+  src/hub/friends.c
+  src/hub/hub.c
+  src/hub/layout.c
+  src/hub/progress.c
+  src/kits/fps/combat.c
+  src/kits/fps/player.c
+  src/portal/registry.c
+  src/portals/test_range.c
+  src/portal/script.c
+  src/portal/session.c
+  src/sim/collide.c
+  src/gfx/font.c
+  src/gfx/gltf.c
+  src/gfx/mesh.c
+  src/gfx/palette.c
+  src/gfx/procgen.c
+  src/gfx/scene.c
+  src/gfx/shader_src.c
+  src/gfx/texdata.c
+  src/gfx/view.c
+  src/gfx/voxel.c)
 target_include_directories(cadv_core PUBLIC src)
+target_include_directories(cadv_core SYSTEM PRIVATE third_party/stb third_party/cgltf)
+if(NOT MSVC)
+  target_link_libraries(cadv_core PUBLIC m)
+endif()
 cadv_strict_warnings(cadv_core)
 
 # cadv_gfx: OpenGL renderer + app frame logic. Needs a GL context at runtime,
@@ -42,7 +72,7 @@ if(NOT EMSCRIPTEN)
   target_include_directories(glad SYSTEM PUBLIC third_party/glad/include)
 endif()
 
-add_library(cadv_gfx STATIC src/gfx/renderer.c src/app/app.c)
+add_library(cadv_gfx STATIC src/gfx/gl_util.c src/gfx/renderer.c src/portals/test_range_gfx.c src/portals/views.c src/hub/hub_gfx.c src/app/app.c)
 target_link_libraries(cadv_gfx PUBLIC cadv_core)
 if(NOT EMSCRIPTEN)
   target_link_libraries(cadv_gfx PUBLIC glad)
@@ -54,13 +84,16 @@ if(CADV_BUILD_GAME)
   include(CadvSDL3)
   add_executable(cadvent src/platform/sdl_main.c)
   target_link_libraries(cadvent PRIVATE cadv_gfx SDL3::SDL3)
+  target_compile_definitions(cadvent PRIVATE CADV_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
   cadv_strict_warnings(cadvent)
   if(EMSCRIPTEN)
     set_target_properties(cadvent PROPERTIES SUFFIX ".html")
     target_link_options(cadvent PRIVATE
       "--shell-file=${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html"
       "-sMIN_WEBGL_VERSION=2" "-sMAX_WEBGL_VERSION=2"
-      "-sALLOW_MEMORY_GROWTH=1" "-sENVIRONMENT=web")
+      "-sALLOW_MEMORY_GROWTH=1" "-sENVIRONMENT=web" "-lidbfs.js"
+      "-sEXPORTED_RUNTIME_METHODS=['FS']"
+      "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/text@/assets/text")
     set_property(TARGET cadvent APPEND PROPERTY LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
   endif()
 endif()
@@ -70,6 +103,9 @@ if(NOT EMSCRIPTEN)
   add_executable(ppmprobe tools/ppmprobe/ppmprobe.c)
   target_link_libraries(ppmprobe PRIVATE cadv_core)
   cadv_strict_warnings(ppmprobe)
+  add_executable(imgdiff tools/imgdiff/imgdiff.c)
+  target_link_libraries(imgdiff PRIVATE cadv_core)
+  cadv_strict_warnings(imgdiff)
 endif()
 
 # --- instrumentation -----------------------------------------------------------------
@@ -78,7 +114,7 @@ if(TARGET cadvent)
   list(APPEND CADV_FIRST_PARTY_TARGETS cadvent)
 endif()
 if(TARGET ppmprobe)
-  list(APPEND CADV_FIRST_PARTY_TARGETS ppmprobe)
+  list(APPEND CADV_FIRST_PARTY_TARGETS ppmprobe imgdiff)
 endif()
 include(CadvInstrument)
 

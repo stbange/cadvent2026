@@ -114,10 +114,11 @@ per-portal arena — no leaks across portals by construction.
 1. **Scene pass** into a low-resolution FBO (default 400×225 for 16:9, user
    choice 320×180 … 640×360; per-portal default — e.g. Doom-homage at 320×200
    aspect-corrected).
-2. **Shadow passes**: one cascaded-lite directional shadow map (2 cascades,
-   512²) + up to **4 shadow-casting point/spot lights** per view using
-   dual-paraboloid maps (WebGL2-friendly, no cube-array needed). Other lights
-   (up to 32 per view, clustered on a coarse 8×4×8 grid) are unshadowed.
+2. **Shadow passes**: one directional shadow map (1024²) + up to **4
+   shadow-casting point lights** per view using depth cube maps (256² per
+   face, `samplerCubeShadow`, works in WebGL 2). Other lights (up to 32 per
+   view) are unshadowed; at the low internal resolution a simple per-pixel
+   loop over all lights is fast enough, so no clustering is needed.
 3. **Forward lighting**: Lambert + optional Blinn specular, quantised into
    *N light bands* (configurable) for a hand-painted 90s look; per-vertex
    lighting toggle for the oldest-looking portals.
@@ -202,9 +203,10 @@ never devices. Bindings are data-driven and remappable per player.
 
 ### Mobile detection & touch switching
 
-* The web shell switches to touch UI when `matchMedia('(pointer: coarse)')`
-  matches **or** the first input event is a touch event; it switches back when
-  a mouse move/keypress or gamepad is detected (no hard device sniffing).
+* The on-screen controls are drawn by the engine itself from SDL touch events,
+  so they work in the browser and on touch-screen PCs alike. They appear as soon
+  as a touch event arrives and disappear on the next mouse, keyboard or gamepad
+  input (no device sniffing).
 * Orientation: landscape lock request; a friendly "rotate your device" card in portrait.
 * Pointer lock on desktop web after the first click; fullscreen button.
 * Touch layouts are **per-portal data** (`assets/portals/pNN/touch.layout`)

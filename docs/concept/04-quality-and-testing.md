@@ -28,9 +28,9 @@ Each portal gets its own change `add-portal-NN-<slug>` before its implementation
   Exclusions are listed in `gcovr.cfg` and reviewed like code.
 * How 95 % stays realistic for a game:
   * Simulation is pure C with no SDL/GL dependency → directly testable.
-  * GL is behind `gfx_device` with a **recording null backend** for unit tests
-    (asserts on emitted draw calls/state) plus a real backend tested headless
-    via **Mesa llvmpipe / EGL surfaceless** in CI.
+  * GL code is thin and covered by headless game tests that render with
+    **Mesa llvmpipe** (SDL offscreen EGL driver): golden frames and a scripted
+    tour. Coverage is measured over unit tests *and* game tests together.
   * Audio mixing is tested on sample buffers; input mapping on synthetic event streams.
   * Portal logic is tested per mechanic (e.g. "heat above 100 % triggers shutdown").
 * Sanitizers: ASan + UBSan job; Valgrind-free memcheck via ASan; `-fanalyzer`

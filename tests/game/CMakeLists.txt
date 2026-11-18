@@ -1,8 +1,12 @@
 # SPDX-License-Identifier: MIT
-# Headless game tests: run the real executable and inspect its output.
+# Game tests: run the real executable. Scenario tests are headless (no GPU)
+# and run everywhere; rendering tests need an OpenGL driver (Mesa llvmpipe in CI).
 if(NOT TARGET cadvent OR NOT TARGET ppmprobe)
   return()
 endif()
+
+set(GAME_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(FIX ${CMAKE_CURRENT_SOURCE_DIR}/fixtures)
 
 add_test(NAME game.cli_version COMMAND cadvent --version)
 set_tests_properties(game.cli_version PROPERTIES LABELS game PASS_REGULAR_EXPRESSION "cAdvent 2026 [0-9]+\\.[0-9]+\\.[0-9]+")
@@ -10,31 +14,70 @@ add_test(NAME game.cli_help COMMAND cadvent --help)
 set_tests_properties(game.cli_help PROPERTIES LABELS game PASS_REGULAR_EXPRESSION "usage: cadvent")
 add_test(NAME game.cli_rejects_unknown_option COMMAND cadvent --bogus)
 set_tests_properties(game.cli_rejects_unknown_option PROPERTIES LABELS game WILL_FAIL TRUE)
+add_test(NAME game.script_missing_file COMMAND cadvent --headless --script does-not-exist.gts)
+set_tests_properties(game.script_missing_file PROPERTIES LABELS game WILL_FAIL TRUE)
+add_test(NAME game.headless_plain_run COMMAND cadvent --headless --frames 120 --save ${CMAKE_CURRENT_BINARY_DIR}/plain.sav)
+set_tests_properties(game.headless_plain_run PROPERTIES LABELS game)
 
 add_test(NAME tool.ppmprobe_usage COMMAND ppmprobe)
 set_tests_properties(tool.ppmprobe_usage PROPERTIES LABELS game WILL_FAIL TRUE)
 add_test(NAME tool.ppmprobe_missing_file COMMAND ppmprobe does-not-exist.ppm 50 50 0 0 0)
 set_tests_properties(tool.ppmprobe_missing_file PROPERTIES LABELS game WILL_FAIL TRUE)
+add_test(NAME tool.imgdiff_usage COMMAND imgdiff)
+set_tests_properties(tool.imgdiff_usage PROPERTIES LABELS game WILL_FAIL TRUE)
+add_test(NAME tool.imgdiff_missing COMMAND imgdiff a.ppm b.ppm)
+set_tests_properties(tool.imgdiff_missing PROPERTIES LABELS game WILL_FAIL TRUE)
+
+# name script [fixture] [args...]
+function(cadv_scenario name script fixture args)
+  set(save ${CMAKE_CURRENT_BINARY_DIR}/${name}.sav)
+  add_test(NAME game.${name}
+    COMMAND ${CMAKE_COMMAND} -DCADVENT=$<TARGET_FILE:cadvent> -DSCRIPT=${GAME_DIR}/${script}
+            -DSAVE=${save} -DFIXTURE=${fixture} "-DARGS=${args}" ${ARGN}
+            -P ${GAME_DIR}/run_gts.cmake)
+  set_tests_properties(game.${name} PROPERTIES LABELS "game;scenario" TIMEOUT 300)
+endfunction()
+
+cadv_scenario(hub_reach_portal_24 hub_reach_portal_24.gts "" "--date 2026-11-30")
+cadv_scenario(hub_sealed_portal hub_sealed_portal.gts "" "--date 2026-12-04T23:59")
+cadv_scenario(hub_still_thawing hub_still_thawing.gts "" "--date 2026-12-05")
+cadv_scenario(dev_enter_and_win dev_enter_and_win.gts "" "--unlock-all")
+cadv_scenario(stars_socketing stars_socketing.gts ${FIX}/two_stars.sav "--date 2026-12-10")
+cadv_scenario(gate_before_eve gate_before_eve.gts ${FIX}/arch_full.sav "--date 2026-12-23")
+cadv_scenario(gate_on_eve gate_on_eve.gts ${FIX}/arch_full.sav "--date 2026-12-24")
+cadv_scenario(gate_missing gate_missing.gts ${FIX}/arch_missing.sav "--date 2026-12-24")
+cadv_scenario(epilogue epilogue.gts ${FIX}/star24.sav "--date 2026-12-24")
+cadv_scenario(checkpoint_resume checkpoint_run1.gts "" "--unlock-all --portal 1" -DSCRIPT2=${GAME_DIR}/checkpoint_run2.gts)
+cadv_scenario(marks marks.gts "" "--unlock-all --portal 1")
+cadv_scenario(isolation isolation.gts "" "--unlock-all --portal 1")
 
 if(CADV_GFX_TESTS)
-  # Renders 3 frames at 320x180, writes a screenshot and probes it:
-  # centre = fir-green triangle, corner = night-blue clear colour.
-  add_test(NAME game.smoke_triangle
-    COMMAND ${CMAKE_COMMAND}
-      -DCADVENT=$<TARGET_FILE:cadvent> -DPPMPROBE=$<TARGET_FILE:ppmprobe>
-      -DOUT=${CMAKE_CURRENT_BINARY_DIR}/smoke_triangle.ppm
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/smoke_triangle.cmake)
-  set_tests_properties(game.smoke_triangle PROPERTIES LABELS "game;gfx" TIMEOUT 60)
+  function(cadv_golden name args)
+    add_test(NAME game.golden_${name}
+      COMMAND ${CMAKE_COMMAND} -DCADVENT=$<TARGET_FILE:cadvent> -DIMGDIFF=$<TARGET_FILE:imgdiff>
+              -DOUT=${CMAKE_CURRENT_BINARY_DIR}/golden_${name}.ppm
+              -DGOLDEN=${PROJECT_SOURCE_DIR}/tests/golden/${name}.ppm "-DARGS=${args}"
+              -P ${GAME_DIR}/golden.cmake)
+    set_tests_properties(game.golden_${name} PROPERTIES LABELS "game;gfx;golden" TIMEOUT 120)
+    list(APPEND CADV_GFX_TEST_NAMES game.golden_${name})
+    set(CADV_GFX_TEST_NAMES ${CADV_GFX_TEST_NAMES} PARENT_SCOPE)
+  endfunction()
+  cadv_golden(hall_spawn "--frames 12 --date 2026-12-05 --save ${CMAKE_CURRENT_BINARY_DIR}/g1.sav")
+  cadv_golden(hall_dev "--frames 12 --unlock-all --save ${CMAKE_CURRENT_BINARY_DIR}/g2.sav")
+  cadv_golden(test_range "--frames 12 --unlock-all --portal 3 --save ${CMAKE_CURRENT_BINARY_DIR}/g3.sav")
 
-  add_test(NAME game.frames_without_screenshot COMMAND cadvent --frames 2 --width 64 --height 64)
-  set_tests_properties(game.frames_without_screenshot PROPERTIES LABELS "game;gfx" PASS_REGULAR_EXPRESSION "shutdown after 2 frames" TIMEOUT 60)
+  add_test(NAME game.render_scripted_tour
+    COMMAND cadvent --width 320 --height 180 --unlock-all --save ${CMAKE_CURRENT_BINARY_DIR}/tour.sav
+            --script ${GAME_DIR}/tour.gts)
+  set_tests_properties(game.render_scripted_tour PROPERTIES LABELS "game;gfx" TIMEOUT 300
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   add_test(NAME game.screenshot_unwritable_path
-    COMMAND cadvent --frames 1 --width 64 --height 64 --screenshot /nonexistent-dir/x.ppm)
+    COMMAND cadvent --frames 1 --width 64 --height 64 --save ${CMAKE_CURRENT_BINARY_DIR}/u.sav --screenshot /nonexistent-dir/x.ppm)
   set_tests_properties(game.screenshot_unwritable_path PROPERTIES LABELS "game;gfx" WILL_FAIL TRUE TIMEOUT 60)
+  set(gfx_tests ${CADV_GFX_TEST_NAMES} game.render_scripted_tour game.screenshot_unwritable_path)
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # SDL's offscreen driver + EGL renders with Mesa llvmpipe, no display needed.
-    set_tests_properties(game.smoke_triangle game.screenshot_unwritable_path game.frames_without_screenshot
-      PROPERTIES ENVIRONMENT "SDL_VIDEO_DRIVER=offscreen")
+    set_tests_properties(${gfx_tests} PROPERTIES ENVIRONMENT "SDL_VIDEO_DRIVER=offscreen;SDL_AUDIO_DRIVER=dummy")
   endif()
 endif()
 
