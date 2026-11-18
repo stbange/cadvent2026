@@ -68,8 +68,9 @@ static void test_layout_paths(void)
 
 static void test_states_follow_calendar_and_progress(void)
 {
-    TEST_ASSERT_EQUAL_INT(CADV_PS_THAWING, h.state[0]);       /* Day 1 has shipped */
-    TEST_ASSERT_EQUAL_INT(CADV_PS_STILL_THAWING, h.state[1]); /* Day 2 has not */
+    TEST_ASSERT_EQUAL_INT(CADV_PS_THAWING, h.state[0]);       /* Days 1 and 2 have shipped */
+    TEST_ASSERT_EQUAL_INT(CADV_PS_THAWING, h.state[1]);
+    TEST_ASSERT_EQUAL_INT(CADV_PS_STILL_THAWING, h.state[2]); /* Day 3 has not */
     TEST_ASSERT_EQUAL_INT(CADV_PS_SEALED, h.state[5]);
     cadv_hub_set_time(&h, cadv_datetime_make(2026, 12, 24, 0, 0));
     TEST_ASSERT_EQUAL_INT(CADV_PS_STARS_MISSING, h.state[23]);
@@ -235,7 +236,7 @@ static void test_portal_prompts_and_use_messages(void)
     run(1);
     TEST_ASSERT_NOT_NULL(strstr(h.prompt, "*  [STAR]"));
     start(2026, 12, 5, false);
-    cadv_hub_teleport(&h, -11.0f, 0, -9.0f, 0.5f * CADV_PI);
+    cadv_hub_teleport(&h, -11.0f, 0, -14.0f, 0.5f * CADV_PI);
     run(1);
     TEST_ASSERT_NOT_NULL(strstr(h.prompt, "STILL THAWING"));
     cadv_hub_set_time(&h, cadv_datetime_make(2026, 12, 24, 9, 0));

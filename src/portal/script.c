@@ -102,9 +102,10 @@ static bool parse_line(cadv_script *s, char *line, int lineno)
         c.a = (float)atof(w[1]);
         c.b = (float)atof(w[2]);
         c.ticks = atoi(w[3]);
-    } else if (strcmp(w[0], "bot") == 0 && n == 2) {
+    } else if ((strcmp(w[0], "bot") == 0 || strcmp(w[0], "bot_for") == 0) && n == 2) {
         c.op = CADV_SOP_BOT;
         c.ticks = atoi(w[1]);
+        c.a = w[0][3] == '_' ? 1.0f : 0.0f; /* bot_for: play N ticks, no need to finish */
     } else if ((strcmp(w[0], "expect") == 0 && n == 4) || (strcmp(w[0], "wait_until") == 0 && n == 5)) {
         c.op = w[0][0] == 'e' ? CADV_SOP_EXPECT : CADV_SOP_WAIT_UNTIL;
         snprintf(c.text, sizeof c.text, "%s", w[1]);
@@ -293,6 +294,10 @@ bool cadv_script_step(cadv_script *s, const cadv_script_host *h, cadv_input_fram
             }
             v = q(h, "outcome", &ok);
             if ((ok && v != 0.0) || (s->elapsed > 0 && mode_ok && (float)mode != c->b)) {
+                next(s);
+                continue;
+            }
+            if (s->elapsed >= c->ticks && c->a > 0.5f) {
                 next(s);
                 continue;
             }

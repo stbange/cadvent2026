@@ -19,6 +19,7 @@
  *   walk_to 2.0 -4.0 600         steer to x z within N ticks (fails on timeout)
  *   bot 7200                     let the current mode's bot play until it ends
  *                                (or until the mode changes, e.g. back to the hall)
+ *   bot_for 600                  let the bot play 600 ticks (no need to finish)
  *   expect hub.stars_socketed == 23
  *   wait_until mode == 1 600     wait for a condition up to N ticks
  *   expect_event portal_won
