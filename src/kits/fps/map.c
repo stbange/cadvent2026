@@ -40,7 +40,11 @@ static void rest_of_line(const char *line, int skip, char *out, size_t cap)
     while (*p == ' ' || *p == '\t') {
         ++p;
     }
-    snprintf(out, cap, "%s", p);
+    /* bounded copy: long texts are cut on purpose */
+    for (i = 0; p[i] && (size_t)i + 1 < cap; ++i) {
+        out[i] = p[i];
+    }
+    out[i] = '\0';
 }
 
 static cadv_vec3 lo3(const float *v) { return cadv_v3(cadv_minf(v[0], v[3]), cadv_minf(v[1], v[4]), cadv_minf(v[2], v[5])); }

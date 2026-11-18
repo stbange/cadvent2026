@@ -64,10 +64,13 @@ static void find_data_dir(platform_state *ps)
     const char *candidates[3];
     char probe[600];
     int i;
+    /* CADV_STRICT_ASSETS=1 (release smoke tests): only next to the executable */
+    const char *strict = SDL_getenv("CADV_STRICT_ASSETS");
+    int count = strict && strict[0] == '1' ? 1 : 3;
     candidates[0] = base ? base : "";
     candidates[1] = "";
     candidates[2] = CADV_SOURCE_DIR "/";
-    for (i = 0; i < 3; ++i) {
+    for (i = 0; i < count; ++i) {
         SDL_PathInfo info;
         snprintf(probe, sizeof probe, "%sassets/text/friends.cfg", candidates[i]);
         if (SDL_GetPathInfo(probe, &info)) {

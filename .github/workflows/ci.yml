@@ -58,6 +58,18 @@ jobs:
       - name: Test
         run: ctest --preset ${{ matrix.preset }}
 
+  linux-release:
+    name: Linux Release build (optimiser warnings)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: ./scripts/install-linux-deps.sh
+      - name: Build
+        run: |
+          cmake --preset linux-release
+          cmake --build --preset linux-release
+
   coverage:
     name: Coverage gate (95 % lines / 85 % branches)
     runs-on: ubuntu-24.04
@@ -102,14 +114,12 @@ jobs:
         run: cmake --preset mingw-cross
       - name: Build
         run: cmake --build --preset mingw-cross
+      - name: Package
+        run: cmake -DEXE=build/mingw-cross/cadvent.exe -DSRC=. -DOUT=dist/cadvent-windows-x64 -P cmake/CadvPackage.cmake
       - uses: actions/upload-artifact@v4
         with:
           name: cadvent-windows-x64
-          path: |
-            build/mingw-cross/cadvent.exe
-            LICENSE
-            LICENSE-ASSETS.md
-            third_party/README.md
+          path: dist/cadvent-windows-x64
 
   web:
     name: Web (Emscripten)
@@ -140,7 +150,7 @@ jobs:
         run: |
           mkdir -p site
           cp build/web/cadvent.html site/index.html
-          cp build/web/cadvent.js build/web/cadvent.wasm site/
+          cp build/web/cadvent.js build/web/cadvent.wasm build/web/cadvent.data site/
       - uses: actions/upload-artifact@v4
         with:
           name: cadvent-web

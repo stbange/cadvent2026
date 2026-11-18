@@ -12,7 +12,7 @@ triangle on Linux, Windows and Web). 13 days until Day 1.
 ## 1. The shape of the plan
 
 ```
- Nov 18 ─ M0 ✔ ── M1a ──── M1b ──── M1c ── Dec 1 ────── daily portals ────── Dec 24 ── Jan
+ Nov 18 ─ M0 ✔ ── M1a ✔ ── M1b ✔ ── M1c ── Dec 1 ────── daily portals ────── Dec 24 ── Jan
           skeleton  renderer  hall +   Day 1–3   ▲ one portal ships every evening    epilogue  marathon
                     input     calendar ready     │ for the next morning              + MP      polish
                     assets    FPS kit            └ work runs 2–4 days ahead
@@ -35,9 +35,9 @@ Three rules make 24 games in 24 days possible:
 | ID | Window | Goal | Exit criteria |
 |---|---|---|---|
 | **M0** ✔ | 18 Nov | Skeleton | presets, CI, coverage gate ≥ 95/85, triangle on all targets |
-| **M1a** | 19–22 Nov | Engine foundation | low-res renderer with lights + shadows, sprites, voxels, meshes, palette post; input + touch; asset loading; deterministic math; save; audio mixer |
-| **M1b** | 23–26 Nov | The Hall | walkable hall, calendar, portal states, portal framework, Star Arch, Wall of Legends, FPS kit |
-| **M1c** | 27–30 Nov | Release candidate | Day 1 shippable, Day 2 nearly done, Day 3 started; web build live on Pages; packaged Windows/Linux builds |
+| **M1a** ✔ | 19–22 Nov | Engine foundation | low-res renderer with lights + shadows, sprites, voxels, meshes, palette post; input + touch; asset loading; deterministic math; save; audio mixer |
+| **M1b** ✔ | 23–26 Nov | The Hall | walkable hall, calendar, portal states, portal framework, Star Arch, Wall of Legends, FPS kit |
+| **M1c** | 27–30 Nov | Release candidate | Day 1 shippable, Day 2 nearly done, Day 3 started; web build live on Pages; packaged Windows/Linux builds — *status 18 Nov: Days 1 and 2 playable end to end (bot-verified), RTS kit slice 1 done, release workflow ready; open: human pace tuning, Day 3 portal, Pages switch-on* |
 | **M2** | 1–24 Dec | Daily portals | each portal ships by the evening before its day (§5) |
 | **M3** | 24 Dec | Christmas Eve | Day 24 + epilogue; multiplayer hub if ready (§6) |
 | **M4** | Jan 2027 | Boxing Day | marathon mode, speed-run timers, bug fixes, post-mortem |

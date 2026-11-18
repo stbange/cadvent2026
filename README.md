@@ -59,8 +59,9 @@ ctest --preset linux-gcc
 ```
 
 Controls: WASD/arrows + mouse (click to capture the mouse), Space jump,
-C crouch, Shift run, E use, mouse buttons fire, 1–5 weapons, Esc leave a
-portal. Gamepads and touch screens work too (touch controls appear
+C crouch, Shift run, E use, mouse buttons fire (right button: alt-fire or
+claim), 1–6 weapons or spells, Esc leave a portal. On the carpet (Day 2),
+Space climbs and C sinks. Gamepads and touch screens work too (touch controls appear
 automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,
@@ -94,6 +95,19 @@ python3 -m http.server --directory build/web 8000
 ```
 
 Then open <http://localhost:8000/cadvent.html>. Browser tests: `cd tests/web && npm ci && npx playwright test`.
+
+**Release packages**: pushing a tag `vX.Y.Z` runs `.github/workflows/release.yml`,
+which builds self-contained archives (Linux `tar.gz`, Windows `zip`, web `zip`)
+and attaches them to a GitHub release. Locally, any build can be packaged with
+
+```bash
+cmake -DEXE=build/linux-release/cadvent -DSRC=. -DOUT=dist/cadvent -DARCHIVE=dist/cadvent.tar.gz -P cmake/CadvPackage.cmake
+```
+
+The executable finds `assets/` next to itself, so the extracted folder runs anywhere.
+
+**GitHub Pages**: the web build deploys after CI succeeds on `main` once Pages
+is enabled (repository Settings → Pages → Source: GitHub Actions).
 
 ## Licence
 

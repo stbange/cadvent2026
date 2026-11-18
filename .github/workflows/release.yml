@@ -1,0 +1,111 @@
+# SPDX-License-Identifier: MIT
+# Release packages: pushing a tag like v1.0.0 builds self-contained archives
+# for Linux (tar.gz), Windows (zip) and the web (zip) and attaches them to a
+# GitHub release. Run it by hand (workflow_dispatch) to get the archives as
+# workflow artifacts without publishing a release.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  EMSDK_VERSION: "6.0.13"
+
+jobs:
+  linux:
+    name: Linux x86_64 package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: ./scripts/install-linux-deps.sh
+      - name: Build
+        run: |
+          cmake --preset linux-release -DCADV_BUILD_TESTS=OFF
+          cmake --build --preset linux-release
+      - name: Package
+        run: |
+          mkdir -p dist
+          cmake -DEXE=build/linux-release/cadvent -DSRC=. -DOUT=dist/cadvent-linux-x86_64 \
+                -DARCHIVE=dist/cadvent-linux-x86_64.tar.gz -P cmake/CadvPackage.cmake
+      - name: Smoke test the extracted package
+        run: |
+          mkdir -p /tmp/extract /tmp/elsewhere
+          tar xzf dist/cadvent-linux-x86_64.tar.gz -C /tmp/extract
+          cd /tmp/elsewhere
+          CADV_STRICT_ASSETS=1 /tmp/extract/cadvent-linux-x86_64/cadvent --headless --date 2026-12-01 \
+            --portal 1 --save p.sav --script "$GITHUB_WORKSPACE/tests/game/package_smoke.gts"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-linux
+          path: dist/cadvent-linux-x86_64.tar.gz
+
+  windows:
+    name: Windows x64 package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64 ninja-build
+      - name: Build
+        run: |
+          cmake --preset mingw-cross -DCADV_BUILD_TESTS=OFF
+          cmake --build --preset mingw-cross
+      - name: Package
+        run: |
+          mkdir -p dist
+          cmake -DEXE=build/mingw-cross/cadvent.exe -DSRC=. -DOUT=dist/cadvent-windows-x64 \
+                -DARCHIVE=dist/cadvent-windows-x64.zip -P cmake/CadvPackage.cmake
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-windows
+          path: dist/cadvent-windows-x64.zip
+
+  web:
+    name: Web package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSDK_VERSION }}
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Build
+        run: |
+          cmake --preset web -DCADV_BUILD_TESTS=OFF
+          cmake --build --preset web
+      - name: Package
+        run: |
+          mkdir -p dist/cadvent-web
+          cp build/web/cadvent.html dist/cadvent-web/index.html
+          cp build/web/cadvent.js build/web/cadvent.wasm build/web/cadvent.data dist/cadvent-web/
+          cp LICENSE LICENSE-ASSETS.md dist/cadvent-web/
+          cp third_party/README.md dist/cadvent-web/THIRD-PARTY-NOTICES.md
+          cd dist && zip -r cadvent-web.zip cadvent-web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-web
+          path: dist/cadvent-web.zip
+
+  publish:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [linux, windows, web]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" \
+            --title "cAdvent 2026 $GITHUB_REF_NAME" --generate-notes

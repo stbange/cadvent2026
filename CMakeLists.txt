@@ -44,6 +44,8 @@ add_library(cadv_core STATIC
   src/kits/fps/combat.c
   src/kits/fps/map.c
   src/kits/fps/player.c
+  src/kits/rts/grid.c
+  src/kits/rts/rts.c
   src/kits/vehicle/flyer.c
   src/kits/vehicle/terrain.c
   src/portal/registry.c

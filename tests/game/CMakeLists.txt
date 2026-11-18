@@ -42,6 +42,12 @@ function(cadv_scenario name script fixture args)
 endfunction()
 
 cadv_scenario(hub_reach_portal_24 hub_reach_portal_24.gts "" "--date 2026-11-30")
+cadv_scenario(teaser teaser.gts "" "--date 2026-11-18")
+add_test(NAME game.package_runs_from_archive
+  COMMAND ${CMAKE_COMMAND} -DCADVENT=$<TARGET_FILE:cadvent> -DSRC=${PROJECT_SOURCE_DIR}
+          -DWORK=${CMAKE_CURRENT_BINARY_DIR} -DSCRIPT=${GAME_DIR}/package_smoke.gts
+          -P ${GAME_DIR}/package_test.cmake)
+set_tests_properties(game.package_runs_from_archive PROPERTIES LABELS game)
 cadv_scenario(hub_sealed_portal hub_sealed_portal.gts "" "--date 2026-12-04T23:59")
 cadv_scenario(hub_still_thawing hub_still_thawing.gts "" "--date 2026-12-05")
 cadv_scenario(dev_enter_and_win dev_enter_and_win.gts "" "--unlock-all")
