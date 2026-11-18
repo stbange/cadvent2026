@@ -6,4 +6,4 @@ expect portal.keys == 1
 press pause
 wait 2
 expect mode == 0
-expect progress.checkpoint.1 == 1
+expect progress.checkpoint.2 == 1

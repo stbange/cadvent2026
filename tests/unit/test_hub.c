@@ -68,7 +68,8 @@ static void test_layout_paths(void)
 
 static void test_states_follow_calendar_and_progress(void)
 {
-    TEST_ASSERT_EQUAL_INT(CADV_PS_STILL_THAWING, h.state[0]);
+    TEST_ASSERT_EQUAL_INT(CADV_PS_THAWING, h.state[0]);       /* Day 1 has shipped */
+    TEST_ASSERT_EQUAL_INT(CADV_PS_STILL_THAWING, h.state[1]); /* Day 2 has not */
     TEST_ASSERT_EQUAL_INT(CADV_PS_SEALED, h.state[5]);
     cadv_hub_set_time(&h, cadv_datetime_make(2026, 12, 24, 0, 0));
     TEST_ASSERT_EQUAL_INT(CADV_PS_STARS_MISSING, h.state[23]);
@@ -162,6 +163,7 @@ static void test_shining_stars__missing_stars_message_at_portal_24(void)
 static void test_beams(void)
 {
     int days[24];
+    start(2026, 11, 25, false);
     TEST_ASSERT_EQUAL_INT(0, cadv_hub_beams(&h, days, 24)); /* nothing open yet */
     start(2026, 12, 7, true);
     TEST_ASSERT_EQUAL_INT(1, cadv_hub_beams(&h, days, 24));
@@ -233,7 +235,7 @@ static void test_portal_prompts_and_use_messages(void)
     run(1);
     TEST_ASSERT_NOT_NULL(strstr(h.prompt, "*  [STAR]"));
     start(2026, 12, 5, false);
-    cadv_hub_teleport(&h, -11.0f, 0, -4.0f, 0.5f * CADV_PI);
+    cadv_hub_teleport(&h, -11.0f, 0, -9.0f, 0.5f * CADV_PI);
     run(1);
     TEST_ASSERT_NOT_NULL(strstr(h.prompt, "STILL THAWING"));
     cadv_hub_set_time(&h, cadv_datetime_make(2026, 12, 24, 9, 0));
@@ -305,9 +307,9 @@ static void test_hub_bot_balcony_and_ground(void)
     cadv_progress_reset(&pr);
     cadv_friends_default(&fr);
     cadv_hub_init(&h, &pr, &fr, cadv_datetime_make(2026, 12, 15, 12, 0), 2026, false);
-    /* not implemented portals are never targets: idle */
+    /* unshipped portals are never targets: the bot heads for Day 1 */
     cadv_hub_bot(&h, &f);
-    TEST_ASSERT_EQUAL_FLOAT(0.0f, f.move_y);
+    TEST_ASSERT_TRUE(f.look_x != 0.0f || f.move_y > 0.0f);
     h.unlock_all = true;
     for (i = 0; i < CADV_PORTAL_COUNT; ++i) {
         pr.p[i].entered = true;

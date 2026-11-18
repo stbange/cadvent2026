@@ -73,7 +73,7 @@ bool cadv_test_range_init(void *state, const cadv_portal_cfg *cfg)
         }
         s->plaque_mark[i] = i;
         s->plaque_pos[i] = cadv_v3(px[i], 2.0f, pz[i]);
-        s->plaque_yaw[i] = px[i] < 0.0f ? -0.5f * CADV_PI : 0.5f * CADV_PI;
+        s->plaque_yaw[i] = px[i] < 0.0f ? 0.5f * CADV_PI : -0.5f * CADV_PI; /* face into the room */
         cadv_friends_mark_text(&fr, &d->marks[i], s->plaque_text[i], sizeof s->plaque_text[i]);
         s->plaque_count++;
     }

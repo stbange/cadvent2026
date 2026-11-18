@@ -42,8 +42,10 @@ add_library(cadv_core STATIC
   src/hub/layout.c
   src/hub/progress.c
   src/kits/fps/combat.c
+  src/kits/fps/map.c
   src/kits/fps/player.c
   src/portal/registry.c
+  src/portals/p01_sleighed.c
   src/portals/test_range.c
   src/portal/script.c
   src/portal/session.c
@@ -72,7 +74,7 @@ if(NOT EMSCRIPTEN)
   target_include_directories(glad SYSTEM PUBLIC third_party/glad/include)
 endif()
 
-add_library(cadv_gfx STATIC src/gfx/gl_util.c src/gfx/renderer.c src/portals/test_range_gfx.c src/portals/views.c src/hub/hub_gfx.c src/app/app.c)
+add_library(cadv_gfx STATIC src/gfx/gl_util.c src/gfx/renderer.c src/portals/test_range_gfx.c src/portals/p01_sleighed_gfx.c src/portals/views.c src/hub/hub_gfx.c src/app/app.c)
 target_link_libraries(cadv_gfx PUBLIC cadv_core)
 if(NOT EMSCRIPTEN)
   target_link_libraries(cadv_gfx PUBLIC glad)
@@ -93,16 +95,14 @@ if(CADV_BUILD_GAME)
       "-sMIN_WEBGL_VERSION=2" "-sMAX_WEBGL_VERSION=2"
       "-sALLOW_MEMORY_GROWTH=1" "-sENVIRONMENT=web" "-lidbfs.js"
       "-sEXPORTED_RUNTIME_METHODS=['FS']"
-      "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/text@/assets/text")
+      "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/text@/assets/text"
+      "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/maps@/assets/maps")
     set_property(TARGET cadvent APPEND PROPERTY LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
   endif()
 endif()
 
 # --- tools -------------------------------------------------------------------------
 if(NOT EMSCRIPTEN)
-  add_executable(ppmprobe tools/ppmprobe/ppmprobe.c)
-  target_link_libraries(ppmprobe PRIVATE cadv_core)
-  cadv_strict_warnings(ppmprobe)
   add_executable(imgdiff tools/imgdiff/imgdiff.c)
   target_link_libraries(imgdiff PRIVATE cadv_core)
   cadv_strict_warnings(imgdiff)
@@ -113,8 +113,8 @@ set(CADV_FIRST_PARTY_TARGETS cadv_core cadv_gfx)
 if(TARGET cadvent)
   list(APPEND CADV_FIRST_PARTY_TARGETS cadvent)
 endif()
-if(TARGET ppmprobe)
-  list(APPEND CADV_FIRST_PARTY_TARGETS ppmprobe imgdiff)
+if(TARGET imgdiff)
+  list(APPEND CADV_FIRST_PARTY_TARGETS imgdiff)
 endif()
 include(CadvInstrument)
 

@@ -3,6 +3,7 @@
  * backed by the shared test range and marked not implemented ("still
  * thawing"): it can then only be entered with the development override. */
 #include "portal/portal.h"
+#include "portals/p01_sleighed.h"
 #include "portals/test_range.h"
 
 static const cadv_mark_def k_marks_01[] = {
@@ -149,7 +150,9 @@ static const cadv_mark_def k_marks_24[] = {
 #define MARKS(d) k_marks_##d, (int)(sizeof k_marks_##d / sizeof k_marks_##d[0])
 
 static const cadv_portal_desc k_portals[CADV_PORTAL_COUNT] = {
-    CADV_TEST_RANGE_DESC(1, "p01_sleighed", "Sleighed!", "Duke Nukem 3D (1996)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_SEATED, MARKS(01)),
+    {1, "p01_sleighed", "Sleighed!", "Duke Nukem 3D (1996)", CADV_CAP_SOLO | CADV_CAP_COOP | CADV_CAP_VERSUS | CADV_CAP_XR_SEATED,
+     true, CADV_P01_STATE_SIZE, cadv_p01_init, cadv_p01_tick, cadv_p01_result, cadv_p01_query, cadv_p01_bot,
+     cadv_p01_teleport, MARKS(01)},
     CADV_TEST_RANGE_DESC(2, "p02_aurora_carpet", "Aurora Carpet", "Magic Carpet 2 (1995)", CADV_CAP_SOLO|CADV_CAP_VERSUS|CADV_CAP_XR_SEATED, MARKS(02)),
     CADV_TEST_RANGE_DESC(3, "p03_frostfront", "Frostfront", "Command & Conquer (1995)", CADV_CAP_SOLO|CADV_CAP_VERSUS|CADV_CAP_XR_TABLETOP, MARKS(03)),
     CADV_TEST_RANGE_DESC(4, "p04_ice_tomb", "Ice Tomb of the Winter King", "Tomb Raider (1996)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_SEATED, MARKS(04)),

@@ -55,6 +55,7 @@ typedef struct cadv_portal_cfg {
     cadv_difficulty difficulty;
     int checkpoint;     /* resume from this checkpoint */
     struct cadv_audio *audio; /* may be NULL (headless) */
+    const char *data_dir;       /* where assets/ lives (with trailing slash), may be "" */
     const char *const *friends; /* friend display names */
     int friend_count;
 } cadv_portal_cfg;

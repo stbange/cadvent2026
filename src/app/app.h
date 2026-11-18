@@ -53,6 +53,7 @@ typedef struct cadv_app {
     cadv_script script;
     bool has_script;
     char save_path[512];
+    char data_dir[512];
     char events[CADV_APP_MAX_EVENTS][40];
     int event_count;
     int frame;

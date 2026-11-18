@@ -273,11 +273,13 @@ static void build_tree(cadv_hub_gfx *g, const cadv_hub *h)
 static int tree_version(const cadv_hub *h)
 {
     int day;
-    int v = 0;
+    unsigned v = 0;
     for (day = 0; day < CADV_PORTAL_COUNT; ++day) {
-        v = v * 3 + (h->progress->p[day].completed ? 1 : 0);
+        if (h->progress->p[day].completed) {
+            v |= 1u << day;
+        }
     }
-    return v;
+    return (int)v;
 }
 
 void cadv_hub_gfx_init(cadv_hub_gfx *g, const cadv_hub *h)

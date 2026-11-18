@@ -9,7 +9,7 @@
 
 static const char *const k_actions[CADV_ACT_COUNT] = {
     "jump", "crouch", "fire", "alt", "use", "radial", "run", "pause",
-    "next", "prev", "w1", "w2", "w3", "w4", "w5", "map"};
+    "next", "prev", "w1", "w2", "w3", "w4", "w5", "w6", "map"};
 
 int cadv_script_action_from_name(const char *name)
 {
@@ -297,7 +297,15 @@ bool cadv_script_step(cadv_script *s, const cadv_script_host *h, cadv_input_fram
                 continue;
             }
             if (s->elapsed++ >= c->ticks) {
-                return failed(s, c, "bot: did not finish in time");
+                bool okx;
+                bool okz;
+                bool okr;
+                double px = q(h, "player.x", &okx);
+                double pz = q(h, "player.z", &okz);
+                double rt = q(h, "route", &okr);
+                snprintf(msg, sizeof msg, "bot: did not finish in time (player at %.1f %.1f, route %g)",
+                         okx ? px : 0.0, okz ? pz : 0.0, okr ? rt : -1.0);
+                return failed(s, c, msg);
             }
             if (h->bot) {
                 h->bot(h->user, out);

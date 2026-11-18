@@ -14,6 +14,7 @@ void setUp(void)
     cfg.day = 1;
     cfg.seed = 7;
     cfg.difficulty = CADV_DIFF_DEFAULT;
+    cfg.data_dir = CADV_SOURCE_DIR; /* Day 1 loads its map from assets/ */
 }
 void tearDown(void) { cadv_session_end(&s); }
 
@@ -27,7 +28,7 @@ static void test_portal_catalog__catalogue_completeness(void)
         TEST_ASSERT_EQUAL_INT(day, d->day);
         TEST_ASSERT_NOT_NULL(d->title);
         TEST_ASSERT_TRUE(d->caps & CADV_CAP_SOLO);
-        TEST_ASSERT_FALSE(d->implemented); /* real games ship from 30 Nov on */
+        TEST_ASSERT_EQUAL(day == 1, d->implemented); /* real games ship one by one */
     }
     TEST_ASSERT_EQUAL_STRING("Iron Yule", cadv_portal_get(6)->title);
     TEST_ASSERT_EQUAL_STRING("Polar Alert", cadv_portal_get(24)->title);
@@ -163,7 +164,8 @@ static void test_checkpoint_spawn(void)
 {
     double v;
     cfg.checkpoint = 1;
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(1), &cfg));
+    cfg.day = 2;
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(2), &cfg));
     s.desc->query(s.state, "keys", &v);
     TEST_ASSERT_EQUAL_DOUBLE(1.0, v);
     TEST_ASSERT_EQUAL_INT(1, cadv_session_result(&s).checkpoint);

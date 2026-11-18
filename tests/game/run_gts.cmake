@@ -6,7 +6,12 @@ if(FIXTURE)
   configure_file("${FIXTURE}" "${SAVE}" COPYONLY)
 endif()
 separate_arguments(extra UNIX_COMMAND "${ARGS}")
-execute_process(COMMAND "${CADVENT}" --headless --script "${SCRIPT}" --save "${SAVE}" ${extra}
+if(RENDER)
+  set(mode --width 320 --height 180)
+else()
+  set(mode --headless)
+endif()
+execute_process(COMMAND "${CADVENT}" ${mode} --script "${SCRIPT}" --save "${SAVE}" ${extra}
   RESULT_VARIABLE rc)
 if(NOT rc EQUAL 0)
   message(FATAL_ERROR "scenario failed (exit ${rc}): ${SCRIPT}")

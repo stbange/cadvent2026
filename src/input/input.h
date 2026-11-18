@@ -24,6 +24,7 @@ typedef enum cadv_action {
     CADV_ACT_WEAPON_3,
     CADV_ACT_WEAPON_4,
     CADV_ACT_WEAPON_5,
+    CADV_ACT_WEAPON_6,
     CADV_ACT_MAP,
     CADV_ACT_COUNT
 } cadv_action;

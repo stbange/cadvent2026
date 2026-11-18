@@ -74,6 +74,7 @@ static void enter_portal(cadv_app *app, int day)
     cfg.difficulty = CADV_DIFF_DEFAULT;
     cfg.checkpoint = app->progress.p[day - 1].checkpoint;
     cfg.audio = &app->audio;
+    cfg.data_dir = app->data_dir;
     cfg.friends = app->friends.ptr;
     cfg.friend_count = app->friends.count;
     if (!cadv_session_start(&app->session, d, &cfg)) {
@@ -174,6 +175,7 @@ bool cadv_app_init(cadv_app *app, const cadv_args *args, bool gpu, cadv_gl_profi
     app->gpu = gpu;
     app->profile = profile;
     app->now = args->has_date ? args->date : now;
+    snprintf(app->data_dir, sizeof app->data_dir, "%s", data_dir);
     cadv_clock_init(&app->clock);
     cadv_input_init(&app->input);
     cadv_audio_init(&app->audio);

@@ -26,7 +26,7 @@ void cadv_input_init(cadv_input *in)
     cadv_input_bind_key(in, CADV_KEY_ESCAPE, CADV_ACT_PAUSE);
     cadv_input_bind_key(in, CADV_KEY_TAB, CADV_ACT_MAP);
     cadv_input_bind_key(in, CADV_KEY_M, CADV_ACT_MAP);
-    for (i = 0; i < 5; ++i) {
+    for (i = 0; i < 6; ++i) {
         cadv_input_bind_key(in, CADV_KEY_1 + i, (cadv_action)(CADV_ACT_WEAPON_1 + i));
     }
     in->mouse_bind[CADV_MOUSE_LEFT] = CADV_ACT_FIRE;

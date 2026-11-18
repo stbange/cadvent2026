@@ -320,14 +320,14 @@ void cadv_test_range_draw(void *state, cadv_scene *sc, cadv_camera *cam, cadv_ui
     if (ui) {
         float cx = (float)ui->width * 0.5f;
         float cy = (float)ui->height * 0.5f;
-        const cadv_weapon_def *w = cadv_weapon_def_get(f->weapon);
+        const cadv_weapon_def *w = cadv_fps_weapon(f, f->weapon);
         cadv_ui_rect(ui, cx - 1, cy - 4, 2, 3, white);
         cadv_ui_rect(ui, cx - 1, cy + 2, 2, 3, white);
         cadv_ui_rect(ui, cx - 5, cy, 3, 1, white);
         cadv_ui_rect(ui, cx + 3, cy, 3, 1, white);
         snprintf(buf, sizeof buf, "HP %d  AR %d", p->health, p->armor);
         cadv_ui_text(ui, 4, (float)ui->height - 12, 1, cadv_v4(1, 0.4f, 0.4f, 1), buf);
-        snprintf(buf, sizeof buf, "%s %d", w->name, w->ammo_per_shot ? f->ammo : 99);
+        snprintf(buf, sizeof buf, "%s %d", w->name, w->ammo_per_shot ? f->ammo[w->ammo_type] : 99);
         cadv_ui_text(ui, (float)ui->width - 6.0f * (float)strlen(buf) - 4, (float)ui->height - 12, 1, cadv_v4(1, 0.9f, 0.5f, 1), buf);
         snprintf(buf, sizeof buf, "DAY %d TEST RANGE  %s", s->day, (p->keys & KEY_BIT) ? "[KEY]" : "");
         cadv_ui_text(ui, 4, 4, 1, cadv_v4(0.8f, 0.85f, 1, 1), buf);
