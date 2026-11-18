@@ -1,0 +1,147 @@
+# SPDX-License-Identifier: MIT
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: "1"
+  EMSDK_VERSION: "6.0.13"
+
+jobs:
+  spec:
+    name: Spec & content checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: OpenSpec validate
+        run: |
+          npm install -g @fission-ai/openspec@2.1.0
+          OPENSPEC_TELEMETRY=0 openspec validate --all --strict
+      - name: Script self-tests
+        run: |
+          pip install pytest==8.3.5
+          python -m pytest -q scripts/tests
+      - name: Scenario traceability
+        run: python scripts/check_traceability.py --verbose
+      - name: Asset credits
+        run: python scripts/check_credits.py
+
+  linux:
+    name: Linux ${{ matrix.preset }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [linux-gcc, linux-clang, sanitize]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: ./scripts/install-linux-deps.sh
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }}
+
+  coverage:
+    name: Coverage gate (95 % lines / 85 % branches)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          ./scripts/install-linux-deps.sh
+          pip install gcovr==8.3
+      - name: Build, test and enforce coverage
+        run: cmake --workflow --preset ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: build/coverage/coverage
+
+  windows-msvc:
+    name: Windows MSVC
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        # Hosted Windows runners have no OpenGL 3.3 driver: GPU tests stay off.
+        run: cmake --preset windows-msvc -DCADV_GFX_TESTS=OFF
+      - name: Build
+        run: cmake --build --preset windows-msvc
+      - name: Test
+        run: ctest --preset windows-msvc
+
+  windows-mingw:
+    name: Windows MinGW-w64 (cross)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64 ninja-build
+      - name: Configure
+        run: cmake --preset mingw-cross
+      - name: Build
+        run: cmake --build --preset mingw-cross
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cadvent-windows-x64
+          path: |
+            build/mingw-cross/cadvent.exe
+            LICENSE
+            LICENSE-ASSETS.md
+            third_party/README.md
+
+  web:
+    name: Web (Emscripten)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSDK_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure
+        run: cmake --preset web
+      - name: Build
+        run: cmake --build --preset web
+      - name: Unit tests (wasm under Node)
+        run: ctest --preset web
+      - name: Browser smoke test (Playwright)
+        working-directory: tests/web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Collect site
+        run: |
+          mkdir -p site
+          cp build/web/cadvent.html site/index.html
+          cp build/web/cadvent.js build/web/cadvent.wasm site/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cadvent-web
+          path: site

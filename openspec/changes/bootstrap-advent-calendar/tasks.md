@@ -2,17 +2,22 @@
 
 ## 1. Repository & quality infrastructure (M0, target 22 Nov)
 
-- [ ] 1.1 CMake project with presets (linux-gcc, linux-clang, windows-msvc, windows-mingw, web, coverage, ci workflow)
-- [ ] 1.2 Vendor SDL3, glad (GL 3.3 core), stb_image, cgltf, Unity into third_party/ with licence notices
-- [ ] 1.3 Unity test runner + gcovr config with 95 % line / 85 % branch gate and explicit exclusion list
-- [ ] 1.4 Scenario-to-test traceability script (parses openspec specs, matches test names); test it with fixtures
-- [ ] 1.5 GitHub Actions: spec validation, Linux, Windows, Web, coverage, sanitizers, Pages deploy
-- [ ] 1.6 Asset credits checker (every file in assets/ listed in assets/CREDITS.md); test with fixtures
+- [x] 1.1 CMake project with presets (linux-gcc, linux-clang, windows-msvc, windows-mingw, web, coverage, ci workflow)
+- [x] 1.2 SDL3 (pinned FetchContent, static), glad (GL 3.3 core) and Unity in third_party/ with licence notices
+- [ ] 1.2b Vendor stb_image and cgltf (needed by 3.4)
+- [x] 1.3 Unity test runner + gcovr config with 95 % line / 85 % branch gate and explicit exclusion list
+- [x] 1.4 Scenario-to-test traceability script (parses openspec specs, matches test names); test it with fixtures
+- [x] 1.5 GitHub Actions: spec validation, Linux, Windows, Web, coverage, sanitizers, Pages deploy
+- [x] 1.6 Asset credits checker (every file in assets/ listed in assets/CREDITS.md); test with fixtures
 
 ## 2. Core & platform (M0–M1a)
 
-- [ ] 2.1 core: arenas, deterministic math, PCG RNG, FNV-1a state hash, logging, config parsing — with unit tests
-- [ ] 2.2 platform: SDL3 window, GL/GLES context, timing, prefs path, IDBFS mount on web
+- [x] 2.0 M0 vertical slice: SDL3 window + GL triangle on Linux, Windows and Web, headless smoke test with screenshot probe, browser smoke test
+
+- [x] 2.1a core: arenas, PCG RNG, FNV-1a state hash, logging, command-line parsing, PPM images — with unit tests
+- [ ] 2.1b core: deterministic math, config parsing — with unit tests
+- [x] 2.2a platform: SDL3 window, GL/GLES context, main-callback loop on desktop and web
+- [ ] 2.2b platform: timing, prefs path, IDBFS mount on web
 - [ ] 2.3 Fixed 60 Hz loop with interpolation; headless mode and accelerated speed flag — with unit tests
 - [ ] 2.4 Save system (text format, versioned) — with unit tests for round-trip and corruption handling
 

@@ -26,6 +26,58 @@ Current OpenSpec change: [`bootstrap-advent-calendar`](openspec/changes/bootstra
 openspec validate --strict
 ```
 
+## Building
+
+Requirements: CMake ≥ 3.25, Ninja, a C17 compiler (GCC 13+, Clang 17+ or MSVC 2022).
+SDL3 3.4.20 is downloaded and built automatically.
+
+**Linux**
+
+```bash
+./scripts/install-linux-deps.sh
+```
+
+```bash
+cmake --preset linux-gcc
+```
+
+```bash
+cmake --build --preset linux-gcc
+```
+
+```bash
+ctest --preset linux-gcc
+```
+
+```bash
+./build/linux-gcc/cadvent
+```
+
+Useful flags: `--width/--height`, `--frames N` (quit after N frames),
+`--screenshot out.ppm`, `--log-level debug`. Headless runs work with
+`SDL_VIDEO_DRIVER=offscreen` (Mesa llvmpipe).
+
+**Local CI (coverage gate: ≥ 95 % lines, ≥ 85 % branches)**
+
+```bash
+cmake --workflow --preset ci
+```
+
+**Windows**: `cmake --preset windows-msvc`, then `cmake --build --preset windows-msvc`.
+From Linux: `cmake --preset mingw-cross && cmake --build --preset mingw-cross`.
+
+**Web** (with an activated [emsdk](https://emscripten.org) 6.0.13):
+
+```bash
+cmake --preset web && cmake --build --preset web
+```
+
+```bash
+python3 -m http.server --directory build/web 8000
+```
+
+Then open <http://localhost:8000/cadvent.html>. Browser tests: `cd tests/web && npm ci && npx playwright test`.
+
 ## Licence
 
 * Code: [MIT](LICENSE)

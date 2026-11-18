@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: MIT
+add_library(unity STATIC ${PROJECT_SOURCE_DIR}/third_party/unity/unity.c)
+target_include_directories(unity SYSTEM PUBLIC ${PROJECT_SOURCE_DIR}/third_party/unity)
+target_compile_definitions(unity PUBLIC UNITY_INCLUDE_DOUBLE UNITY_SUPPORT_64)
+
+# One executable per test file: tests/unit/test_<module>.c -> unit.<module>
+file(GLOB CADV_UNIT_TESTS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unit/test_*.c)
+foreach(src IN LISTS CADV_UNIT_TESTS)
+  get_filename_component(name ${src} NAME_WE)
+  string(REGEX REPLACE "^test_" "" module ${name})
+  add_executable(${name} ${src})
+  target_link_libraries(${name} PRIVATE cadv_core unity)
+  cadv_test_warnings(${name})
+  if(CADV_SANITIZE)
+    target_compile_options(${name} PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+    target_link_options(${name} PRIVATE -fsanitize=address,undefined)
+  endif()
+  if(CADV_COVERAGE)
+    target_link_options(${name} PRIVATE --coverage)
+  endif()
+  add_test(NAME unit.${module} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set_tests_properties(unit.${module} PROPERTIES LABELS unit)
+endforeach()
+
+add_subdirectory(game)

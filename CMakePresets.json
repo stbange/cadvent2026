@@ -1,0 +1,111 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "linux-gcc",
+      "displayName": "Linux GCC (Debug)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "gcc" }
+    },
+    {
+      "name": "linux-clang",
+      "displayName": "Linux Clang (Debug)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "clang" }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux GCC (Release)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "gcc", "CMAKE_BUILD_TYPE": "Release", "CADV_BUILD_TESTS": "OFF" }
+    },
+    {
+      "name": "coverage",
+      "displayName": "Coverage (GCC, gcovr gate)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "gcc", "CADV_COVERAGE": "ON" }
+    },
+    {
+      "name": "sanitize",
+      "displayName": "ASan + UBSan (GCC)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "gcc", "CADV_SANITIZE": "ON" }
+    },
+    {
+      "name": "windows-msvc",
+      "displayName": "Windows MSVC",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "windows-mingw",
+      "displayName": "Windows MinGW-w64 (native)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_C_COMPILER": "gcc" },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "mingw-cross",
+      "displayName": "Windows x64 cross-build from Linux (MinGW-w64)",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/mingw-w64-x86_64.cmake",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "CADV_GFX_TESTS": "OFF" }
+    },
+    {
+      "name": "web",
+      "displayName": "Web (Emscripten, WebGL 2)",
+      "inherits": "base",
+      "toolchainFile": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "linux-gcc", "configurePreset": "linux-gcc" },
+    { "name": "linux-clang", "configurePreset": "linux-clang" },
+    { "name": "linux-release", "configurePreset": "linux-release" },
+    { "name": "coverage", "configurePreset": "coverage" },
+    { "name": "coverage-report", "configurePreset": "coverage", "targets": ["coverage"] },
+    { "name": "sanitize", "configurePreset": "sanitize" },
+    { "name": "windows-msvc", "configurePreset": "windows-msvc", "configuration": "Debug" },
+    { "name": "windows-mingw", "configurePreset": "windows-mingw" },
+    { "name": "mingw-cross", "configurePreset": "mingw-cross" },
+    { "name": "web", "configurePreset": "web" }
+  ],
+  "testPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "stopOnFailure": false }
+    },
+    { "name": "linux-gcc", "inherits": "base", "configurePreset": "linux-gcc" },
+    { "name": "linux-clang", "inherits": "base", "configurePreset": "linux-clang" },
+    { "name": "coverage", "inherits": "base", "configurePreset": "coverage" },
+    { "name": "sanitize", "inherits": "base", "configurePreset": "sanitize" },
+    { "name": "windows-msvc", "inherits": "base", "configurePreset": "windows-msvc", "configuration": "Debug" },
+    { "name": "windows-mingw", "inherits": "base", "configurePreset": "windows-mingw" },
+    { "name": "web", "inherits": "base", "configurePreset": "web", "filter": { "include": { "label": "unit" } } }
+  ],
+  "workflowPresets": [
+    {
+      "name": "ci",
+      "displayName": "Local CI: coverage build, all tests, coverage gate",
+      "steps": [
+        { "type": "configure", "name": "coverage" },
+        { "type": "build", "name": "coverage" },
+        { "type": "test", "name": "coverage" },
+        { "type": "build", "name": "coverage-report" }
+      ]
+    }
+  ]
+}

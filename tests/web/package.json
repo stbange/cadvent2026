@@ -1,0 +1,11 @@
+{
+  "name": "cadvent2026-web-tests",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

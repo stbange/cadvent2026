@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>cAdvent 2026</title>
+<style>
+  :root { --bg: #101430; --fg: #e8e2c8; --accent: #d4a640; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+               font-family: monospace; overflow: hidden; }
+  #canvas { display: block; width: 100vw; height: 100vh; image-rendering: pixelated;
+            touch-action: none; outline: none; }
+  #status { position: fixed; left: 16px; bottom: 16px; color: var(--accent); }
+</style>
+</head>
+<body>
+<canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+<div id="status">Loading the Hall of Long Nights…</div>
+<script>
+  var statusEl = document.getElementById('status');
+  var Module = {
+    canvas: document.getElementById('canvas'),
+    print: function (t) { console.log(t); },
+    printErr: function (t) { console.error(t); },
+    setStatus: function (t) { statusEl.textContent = t; statusEl.hidden = !t; },
+    onRuntimeInitialized: function () { statusEl.hidden = true; }
+  };
+  window.addEventListener('error', function () { statusEl.hidden = false; statusEl.textContent = 'Something went wrong. See the console.'; });
+</script>
+{{{ SCRIPT }}}
+</body>
+</html>
