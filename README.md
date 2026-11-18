@@ -106,8 +106,14 @@ cmake -DEXE=build/linux-release/cadvent -DSRC=. -DOUT=dist/cadvent -DARCHIVE=dis
 
 The executable finds `assets/` next to itself, so the extracted folder runs anywhere.
 
-**GitHub Pages**: the web build deploys after CI succeeds on `main` once Pages
-is enabled (repository Settings → Pages → Source: GitHub Actions).
+**GitHub Pages** (playable at <https://stbange.github.io/cadvent2026/play/>):
+Pages publishes the `docs/` folder of `main` (Settings → Pages → Deploy from a
+branch → `main` / `/docs`). To update the online game, rebuild and copy the web
+build into `docs/play/`, then commit and push:
+
+```bash
+cmake --preset web && cmake --build --preset web --target publish-web
+```
 
 ## Licence
 

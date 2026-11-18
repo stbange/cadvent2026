@@ -160,7 +160,7 @@ naval units and two factions, and it carries the epilogue.
 
 | Channel | How | When |
 |---|---|---|
-| Web (main channel for friends) | GitHub Pages, updated by CI on every green `main` | from 30 Nov; needs Settings → Pages → Source: GitHub Actions |
+| Web (main channel for friends) | GitHub Pages from `docs/play/` on `main`, refreshed with `--target publish-web` + commit | from 30 Nov; needs Settings → Pages → Deploy from a branch → `main` / `/docs` |
 | Windows | zip from CI (`cadvent-windows-x64`) | 30 Nov, then weekly or on request |
 | Linux | tar.gz (+ AppImage later) | 30 Nov, then weekly |
 | Tags | `rc-1` (30 Nov), `day-01` … `day-24`, `v1.0` (24 Dec) | every evening |
@@ -199,7 +199,7 @@ friends can't open Day 9 before 9 Dec without the dev override.
 
 | Decision | Default if nobody decides |
 |---|---|
-| Enable GitHub Pages (Settings → Pages → GitHub Actions) | web build only available as a CI artifact |
+| Enable GitHub Pages (Settings → Pages → Deploy from a branch → `main` / `/docs`) | web build only available as a CI artifact |
 | Release time each evening | 20:00 CET |
 | Who playtests each portal before release | the owner, plus any friend who wants early access via the dev URL |
 | Do friends contribute art/music? | procedural art and synth music only |

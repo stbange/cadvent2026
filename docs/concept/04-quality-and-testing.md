@@ -62,7 +62,7 @@ jobs:
   sanitize:   ASan/UBSan unit + game tests
   windows:    MSVC + MinGW build, unit tests, determinism replays
   web:        emsdk build, Node-run unit tests (wasm), Playwright E2E
-  release:    (tags / main) package zip, tar.gz, AppImage; deploy web build to GitHub Pages
+  release:    (tags) package zip, tar.gz and web zip; GitHub Pages serves docs/play/ from main
 ```
 
 Branching: per project owner's request all work lands on **`main`**, kept

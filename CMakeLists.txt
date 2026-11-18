@@ -103,6 +103,17 @@ if(CADV_BUILD_GAME)
       "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/text@/assets/text"
       "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets/maps@/assets/maps")
     set_property(TARGET cadvent APPEND PROPERTY LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html")
+    # GitHub Pages publishes docs/ from main: copy the build to docs/play/.
+    #   cmake --build --preset web --target publish-web
+    set(CADV_PLAY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/docs/play")
+    add_custom_target(publish-web
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${CADV_PLAY_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:cadvent>/cadvent.html" "${CADV_PLAY_DIR}/index.html"
+      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:cadvent>/cadvent.js" "$<TARGET_FILE_DIR:cadvent>/cadvent.wasm"
+              "$<TARGET_FILE_DIR:cadvent>/cadvent.data" "${CADV_PLAY_DIR}/"
+      COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_SOURCE_DIR}/docs/.nojekyll"
+      DEPENDS cadvent
+      COMMENT "Publishing the web build to docs/play/ (commit it to update GitHub Pages)")
   endif()
 endif()
 
