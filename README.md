@@ -15,6 +15,11 @@ marks the crew left everywhere: *"Dr.Doom did this"*, *"Bloodmaker was here"*,
 * **Process:** [OpenSpec](openspec/) spec-driven development, ≥ 95 % unit-test coverage, automated game tests and completion bots
 * **Multiplayer (optional):** split screen and online via WebRTC
 
+## Plan
+
+**[docs/PLAN.md](docs/PLAN.md)**: milestones, the pre-season sprint, the December
+production schedule for all 24 portals, definition of done and fallbacks.
+
 ## Concept
 
 Start with **[docs/concept/README.md](docs/concept/README.md)**: vision & hub,

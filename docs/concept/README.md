@@ -8,6 +8,7 @@ Bloodmaker, C6P, X-Ray Junkie, Messerjocke, Foen-X) left their marks everywhere.
 
 | # | Document | Contents |
 |---|---|---|
+| ★ | [Master Plan](../PLAN.md) | schedule, milestones, per-portal build windows and core scope |
 | 1 | [Vision, Calendar & The Hall](01-vision-and-hub.md) | pitch, pillars, hub layout, portal states, unlock rule, progression |
 | 2 | [Technology](02-technology.md) | C17 + SDL3 + OpenGL/WebGL2, architecture, rendering, platforms, WebXR, controls & touch |
 | 3 | [Multiplayer](03-multiplayer.md) | split screen, WebRTC online, lockstep vs snapshots, per-portal matrix |
