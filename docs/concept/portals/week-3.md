@@ -29,7 +29,11 @@ Gate) and close the Abyss gate by killing the **Gatekeeper**.
 
 **Look.** 320×200 aspect, strict light banding & distance darkness, flicker and strobe sectors (dynamic lights with shadows from lamps), texture style of grimy tech + icy hell stone (original), nitrogen pools glowing cyan. All monsters are hand-painted 8-direction sprites.
 
-**Stars.** ★ finish · ★★ 100 % kills on one map · ★★★ all secrets and beat par on all maps.
+**Snowflakes.** ❄ finish · ❄❄ 100 % kills on one map · ❄❄❄ all secrets and beat par on all maps.
+
+**Shining Star.** Behind the Gatekeeper's throne; the gate closes only after you take it.
+
+**Friends' marks.** Secret room scrawled in frost: "**Dr.Doom did this**"; the tally screen jokes "Par time set by **Bloodmaker**"; marine dog tags "**C6P**" in a crate.
 
 **Multiplayer & XR.** Co-op 2 split / 4 online, deathmatch 4. XR full.
 
@@ -70,7 +74,11 @@ spirit (5 min) → crystal cave shrine (5 min) → boss (5 min).
 for characters and enemies with soft shadows, affine textures, painterly
 skyboxes, sun shafts through trees (shadowed sun), fireflies as many tiny lights.
 
-**Stars.** ★ beat the Hollow Stag · ★★ no party KO · ★★★ reach weapon level 3 with every weapon.
+**Snowflakes.** ❄ beat the Hollow Stag · ❄❄ no party KO · ❄❄❄ reach weapon level 3 with every weapon.
+
+**Shining Star.** The Evergreen's first new blossom turns into the Star after the Hollow Stag falls.
+
+**Friends' marks.** The innkeeper **Foen-X** sells warm-wind scrolls; the travelling knife-grinder **Messerjocke** upgrades your sword; a rabbit-blob named **Dr. Doom** is surprisingly hard.
 
 **Multiplayer & XR.** **Couch co-op 3** (split in 3), 3 online. XR seated.
 
@@ -112,7 +120,11 @@ one of 3 techs with the recovered core, heal/promote soldiers).
 green interior glow, soldiers' torches as shadowed spot lights. Low-poly meshes
 and voxel terrain props that break.
 
-**Stars.** ★ win both missions · ★★ no soldier lost · ★★★ capture a Glimmerkin alive in mission 1.
+**Snowflakes.** ❄ win both missions · ❄❄ no soldier lost · ❄❄❄ capture a Glimmerkin alive in mission 1.
+
+**Shining Star.** Inside the crashed craft's navigation core; research during the interlude unlocks it, and it must be carried out in mission 2.
+
+**Friends' marks.** Your default soldier roster: **Dr. Doom**, **Bloodmaker**, **C6P**, **X-Ray Junkie**, **Messerjocke** and **Foen-X**. Permadeath makes it personal.
 
 **Multiplayer & XR.** Hot-seat 2, co-op 2 online (each owns half the squad). XR tabletop (miniature battlefield) or embodied.
 
@@ -151,7 +163,11 @@ textures, and **lightmap-like dynamic lighting**: torches and flickering lights
 with real shadows, plus coloured light (the one portal that shows what
 "Quake with real-time shadows" might have looked like).
 
-**Stars.** ★ finish · ★★ all realms without dying · ★★★ find the secret realm.
+**Snowflakes.** ❄ finish · ❄❄ all realms without dying · ❄❄❄ find the secret realm.
+
+**Shining Star.** A fifth rune, hidden in the final shrine; reachable only after the Old Cold falls.
+
+**Friends' marks.** Deathmatch bots are your friends; the secret realm's sign reads "**Dr. Doom**'s Rune Lab"; a gib-splattered wall "**Bloodmaker was here**".
 
 **Multiplayer & XR.** Deathmatch 4 split / 8 online (the classic). XR full.
 
@@ -192,7 +208,11 @@ ascent with Flow-jump puzzles (5 min) → lieutenant duels (5 min) → Vesh (5 m
 monastery and casts moving shadows (the iconic effect); prayer flags, mist,
 night sky with a big moon. Mesh characters.
 
-**Stars.** ★ finish · ★★ beat Vesh without healing · ★★★ get both endings (2 runs).
+**Snowflakes.** ❄ finish · ❄❄ beat Vesh without healing · ❄❄❄ get both endings (2 runs).
+
+**Shining Star.** The Heart Lantern itself; claimed after the duel with Vesh.
+
+**Friends' marks.** The monastery's Wall of Masters lists **Messerjocke** the Blade-Saint and **Foen-X** of the Warm Winds; training remote **C6P** beeps at you.
 
 **Multiplayer & XR.** Duel 2 split/online. XR **full**: swing with your controller.
 
@@ -235,7 +255,11 @@ morph flyers, break the bastion's siege tanks (8 min).
 purple in the dark; human base with floodlights casting long shadows across
 the creep. Units are voxel creatures.
 
-**Stars.** ★ win · ★★ win with ≤ 20 supply lost · ★★★ win under 14 min.
+**Snowflakes.** ❄ win · ❄❄ win with ≤ 20 supply lost · ❄❄❄ win under 14 min.
+
+**Shining Star.** Inside the Command Bastion's reactor; a drone must carry it back to your hive.
+
+**Friends' marks.** Consortium outposts "Fort **Messerjocke**" and "Camp **Foen-X**"; the Bastion's commander is General **Dr. Doom** (radio only).
 
 **Multiplayer & XR.** 1v1 online lockstep (Skrael vs Consortium playable). XR tabletop.
 

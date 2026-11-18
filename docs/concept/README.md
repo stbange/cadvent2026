@@ -1,7 +1,10 @@
 # cAdvent 2026 — Game Concept
 
 A first-person 3D advent calendar: one solemn festive hall, 24 portals, one new
-retro-inspired game per day from **1 to 24 December 2026**.
+retro-inspired game per day from **1 to 24 December 2026**. Each of the first
+23 portals hides a **Shining Star**; all 23 must be set into the Star Arch
+before the 24th portal opens on Christmas Eve. Along the way the crew (Dr. Doom,
+Bloodmaker, C6P, X-Ray Junkie, Messerjocke, Foen-X) left their marks everywhere.
 
 | # | Document | Contents |
 |---|---|---|
@@ -10,6 +13,7 @@ retro-inspired game per day from **1 to 24 December 2026**.
 | 3 | [Multiplayer](03-multiplayer.md) | split screen, WebRTC online, lockstep vs snapshots, per-portal matrix |
 | 4 | [Quality & Testing](04-quality-and-testing.md) | OpenSpec workflow, ≥ 95 % coverage, game bots, golden frames, CI |
 | 5 | [Production Plan](05-production-plan.md) | schedule, milestones, assets, risks, IP policy, licences |
+| 6 | [Friends' Marks](06-friends-marks.md) | the crew's tags hidden in every portal, Wall of Legends, Santa Claude |
 | P | Portals [Week 1](portals/week-1.md) · [Week 2](portals/week-2.md) · [Week 3](portals/week-3.md) · [Week 4](portals/week-4.md) | the 24 game designs |
 
 ## The 24 portals at a glance
@@ -24,7 +28,7 @@ names the classic whose *genre and mechanics* each portal celebrates.
 | 3 | **Frostfront** | RTS | commander on foot, wrist-tablet sidebar | destroy the Ember Spire HQ | Command & Conquer (1995) |
 | 4 | **Ice Tomb of the Winter King** | Platformer | grid-snapped first-person parkour | recover 3 Sun Gears | Tomb Raider (1996) |
 | 5 | **Hearthguard** | RTS | village captain with signal horn | survive 3 raids, burn the Longhall | Warcraft II (1995) |
-| 6 | **Iron Yule** | Vehicle | mech cockpit, heat & torso twist | 3-mission campaign, ace duel | MechWarrior 2 (1995) |
+| 6 | **Iron Yule** | Vehicle | mech cockpit, heat & torso twist, escort **Santa Claude** | 3-mission campaign, ace duel | MechWarrior 2 (1995) |
 | 7 | **Tinsel Strike** | FPS | — (native) | win best-of-9 bomb rounds | Counter-Strike (1999) |
 | 8 | **Cascade** | FPS | no-cutscene storytelling | reverse the resonance beam | Half-Life (1998) |
 | 9 | **Skifrost** | Vehicle/FPS | skiing + jetpack | 5 flag captures | Starsiege: Tribes (1998) |
@@ -42,7 +46,7 @@ names the classic whose *genre and mechanics* each portal celebrates.
 | 21 | **Ages of Midwinter** | RTS | chieftain among villagers, ages transform around you | build & hold the Solstice Monolith | Age of Empires (1997) |
 | 22 | **Grave Tidings** | FPS | — (native) | silence the Hollow Bell | Blood (1997) |
 | 23 | **Total Thaw** | RTS/Vehicle | you *are* the Commander walker | destroy the enemy Commander | Total Annihilation (1997) |
-| 24 | **Polar Alert** | RTS | ground, ship bridge, dirigible views | capture the Star Beacon (finale) | C&C: Red Alert (1996) |
+| 24 | **Polar Alert** | RTS | ground, ship bridge, dirigible views; opens only with 23 Shining Stars | capture the Star Beacon (finale) | C&C: Red Alert (1996) |
 
 ## How the concept maps to OpenSpec
 

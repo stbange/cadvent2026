@@ -12,9 +12,9 @@ needed before any portal can be built, and it must be specified first so
 ## What Changes
 
 - Introduce the date-based unlock rule for 24 portals (1–24 Dec 2026).
-- Introduce the hub hall: navigation, portal states, progression (stars,
+- Introduce the hub hall: navigation, portal states, progression (snowflakes,
   ornaments, wreath), epilogue.
-- Introduce the portal framework: lifecycle, results, stars, saves,
+- Introduce the portal framework: lifecycle, results, snowflakes, saves,
   capability declaration, deterministic simulation and bot hooks.
 - Introduce the retro rendering contract: low internal resolution, dynamic
   lights and shadows, sprites, voxels, meshes, palette post-processing,
@@ -26,6 +26,12 @@ needed before any portal can be built, and it must be specified first so
   online sessions, declared per portal.
 - Introduce quality gates: unit-test coverage ≥ 95 %, automated game tests,
   completion bots, determinism, CI.
+- Introduce the Shining Star meta-quest: one star per portal 1–23, the
+  Star Arch that must be complete before portal 24 opens, and the 24th star
+  that crowns the tree.
+- Introduce friends' marks: the crew's gamer tags hidden in every portal and
+  the Wall of Legends; Santa Claude as guest character in portal 6.
+- Use snowflakes (0–3) as the per-portal rating, distinct from Shining Stars.
 - Introduce the portal catalogue: the 24 portals with their goals and win
   conditions (details per portal follow in later `add-portal-NN-*` changes).
 - Introduce licensing & originality rules (MIT code, CC BY 4.0 assets, no
@@ -46,6 +52,8 @@ external platforms, accounts.
 - `platform-builds`: supported targets and their packaging/runtime expectations.
 - `multiplayer`: optional local split-screen and online play.
 - `quality-gates`: coverage, automated game tests, determinism and CI requirements.
+- `shining-stars`: collectible stars in portals 1–23, the Star Arch gate for portal 24 and the 24th star.
+- `friends-marks`: configurable friends' names as discoverable marks in all portals.
 - `portal-catalog`: the list of 24 portals, their day, goal and minimum content.
 - `licensing`: licence and originality obligations for code and assets.
 

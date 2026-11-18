@@ -21,7 +21,7 @@ The web build SHALL load the hub with an initial download of at most 10 MB and f
 
 #### Scenario: Web save persists
 - **WHEN** the browser tab is closed and reopened
-- **THEN** stars and checkpoints are still present
+- **THEN** snowflakes, Shining Stars, found marks and checkpoints are still present
 
 ### Requirement: WebXR entry
 The web build SHALL show an "Enter VR" control only when immersive VR is supported and SHALL fall back to flat mode when the session ends.

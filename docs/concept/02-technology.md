@@ -88,7 +88,7 @@ typedef struct cadv_portal_desc {
     void (*tick)     (cadv_world *w, const cadv_input_frame *in);  /* pure sim */
     void (*render)   (const cadv_world *w, cadv_view *views, int nviews, float alpha);
     void (*audio)    (const cadv_world *w, cadv_audio *a);
-    cadv_result (*result)(const cadv_world *w);                   /* running/won/lost + stars */
+    cadv_result (*result)(const cadv_world *w);                   /* running/won/lost + snowflakes + shining star */
     uint64_t (*hash) (const cadv_world *w);
     void (*bot)      (const cadv_world *w, int player, cadv_actions *out); /* test/AI driver */
 } cadv_portal_desc;

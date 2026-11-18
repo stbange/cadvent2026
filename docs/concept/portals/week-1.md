@@ -3,7 +3,7 @@
 Every portal follows the same template: **Inspiration** (what defined the
 classic: our research notes), **Premise**, **First-person adaptation**,
 **Goal**, **20-minute flow**, **Mechanics** (Core / *Garnish*), **Cast**,
-**Look**, **Stars**, **Multiplayer & XR**, **Bot & tests**.
+**Look**, **Snowflakes** (0–3 rating), **Shining Star** (where the portal's collectible star is won), **Friends' marks**, **Multiplayer & XR**, **Bot & tests**.
 All names, characters, places and art are original.
 
 ---
@@ -49,7 +49,11 @@ signage textures (fictional shops: "Gnome Depot", "Pretzel Planet"), neon
 coloured lights, light banding on, 320×200 feel. Dynamic light from muzzle
 flashes, sparking wires, the Siphon's pulsing beam that casts long shadows on the roof.
 
-**Stars.** ★ finish · ★★ under 18 min · ★★★ all 6 secrets.
+**Snowflakes.** ❄ finish · ❄❄ under 18 min · ❄❄❄ all 6 secrets.
+
+**Shining Star.** Locked inside the Light Siphon's core: it tumbles free when the Siphon explodes and must be grabbed (jetpack) before the dome collapses.
+
+**Friends' marks.** Toilet-stall graffiti "**Bloodmaker was here**"; the arcade cabinet's high-score table is topped by **DR.DOOM**; the mall's hair salon "**Foen-X Hair Studio**" has dryers you can switch on to blow small enemies away; a wanted poster "**Beware of Messerjocke**" in the security office.
 
 **Multiplayer & XR.** Co-op 2 split / 4 online, "Mall Brawl" deathmatch. XR seated.
 
@@ -95,7 +99,11 @@ painted 64² textures blended by height (snow, rock, water). Ocean reflects the
 aurora. Fireballs are dynamic point lights that shadow the terrain (shadowed
 light #1 = the closest fireball). Castles are voxel models that grow in steps.
 
-**Stars.** ★ win · ★★ castle never below level 2 · ★★★ win in < 15 min.
+**Snowflakes.** ❄ win · ❄❄ castle never below level 2 · ❄❄❄ win in < 15 min.
+
+**Shining Star.** Rises from the aurora's apex when you pass 75 % mana (or from the ruins of Vael's castle); fly straight up to catch it before it fades.
+
+**Friends' marks.** An island shaped like a dagger on the map, "**Messerjocke's Rock**"; giant terrain runes **C6P** visible only from high altitude; Vael taunts that "even **Dr. Doom** couldn't hold this much mana".
 
 **Multiplayer & XR.** Versus 2 split / 4 online (rival wizards). XR seated (carpet = cockpit).
 
@@ -141,7 +149,11 @@ when you stand next to them); crystals emit green-cyan light and are the
 scene's main dynamic light sources at dusk; muzzle flashes and burning
 wrecks add more. Tablet UI uses chunky 90s sidebar icons (original).
 
-**Stars.** ★ win · ★★ harvester never lost · ★★★ win under 15 min.
+**Snowflakes.** ❄ win · ❄❄ harvester never lost · ❄❄❄ win under 15 min.
+
+**Shining Star.** Sealed in the Ember Spire's vault; after the Spire falls, an engineer must carry it out to you.
+
+**Friends' marks.** The recon buggy's callsign is "**X-Ray Junkie**" (it reveals shroud); the capturable tech building is the "**Dr. Doom Research Lab**"; an enemy radio intercept: "**Bloodmaker** squad, hold the bridge!".
 
 **Multiplayer & XR.** 1v1 online lockstep. XR tabletop war-table.
 
@@ -185,7 +197,11 @@ and a **grid-aware traversal system**: jumps snap to tile lengths, holding
 the grid readable (classic level-design trick), affine texture wobble on,
 torch light with shadows on stairs, caustics in water, cold blue fog.
 
-**Stars.** ★ finish · ★★ ≤ 3 save crystals used · ★★★ all 3 secret jade ornaments.
+**Snowflakes.** ❄ finish · ❄❄ ≤ 3 save crystals used · ❄❄❄ all 3 secret jade ornaments.
+
+**Shining Star.** The three Sun Gears lock into the solar door and form the Star; it hovers in the light beam as the door opens.
+
+**Friends' marks.** A carving next to a swinging-blade trap: "**Beware of Messerjocke**"; an earlier explorer's journal signed **Foen-X** hints that warm air melts the ice wall (the puzzle solution); scratched tally marks "**C6P** — day 41".
 
 **Multiplayer & XR.** Co-op 2 online (puzzles need 2 levers in co-op variant), ghost race. XR seated with comfort vignette.
 
@@ -225,7 +241,11 @@ carved **command stave** (radial). Workers respond with original funny barks
 colours, warm firelight from homes vs cold blue night; trolls carry torches
 (their lights warn of raids). Thick forests as instanced sprites with shadows.
 
-**Stars.** ★ win · ★★ no building lost in raids · ★★★ win with hero alive and ≤ 20 units built.
+**Snowflakes.** ❄ win · ❄❄ no building lost in raids · ❄❄❄ win with hero alive and ≤ 20 units built.
+
+**Shining Star.** Appears in the midwinter fire pit when the Longhall burns; the Captain must bring it home to the hearth.
+
+**Friends' marks.** Workers bark "**Messerjocke** sharpened my axe!"; the troll warlord is **Bloodmaker the Unwashed**; the snow-owl scout is called **X-Ray Junkie**; the tavern sign reads "**Foen-X**: Warm Mead, Hot Air".
 
 **Multiplayer & XR.** 1v1 / 2v2 online lockstep. XR tabletop.
 
@@ -245,26 +265,39 @@ polygon worlds, moody synth-orchestral soundtrack.
 
 **Premise.** Pilot *Sable* of the **Hollowfrost Militia** defends the
 Winterhold valley from the corporate strip-miners of **Grail-Rex Industries**.
+The valley's lifeline is **Santa Claude**, a jovial, slightly too
+helpful convoy AI who drives the red-and-white supply crawler *Sleighbell*.
+His "beard" is a white antenna array, he speaks in calm, polite, very
+thorough radio messages ("I've considered three routes; the safest one is also
+the most scenic. Ho ho ho!"), and he always delivers.
 
 **First-person adaptation.** Native (cockpit). Physical cockpit with
 MFDs, a throttle lever, heat gauge and damage silhouette; in XR the cockpit
 is fully interactive.
 
-**Goal.** A 3-mission mini-campaign: (1) escort a supply crawler, (2) destroy the
-ice dam pump station, (3) duel the enemy ace "Krampus" walker.
+**Goal.** A 3-mission mini-campaign: (1) escort Santa Claude's supply crawler
+through an ambush canyon, (2) destroy the ice dam pump station while Santa Claude
+relays enemy positions, (3) duel the enemy ace "Krampus" walker; Santa
+Claude's crawler parks at the crater rim and air-drops coolant canisters
+if you ask nicely over the radio.
 
 **20-minute flow.** ~5 min mech lab tutorial & mission 1, ~8 min mission 2,
 ~7 min mission 3 (duel in a frozen crater with steam vents that cool you).
 
 **Mechanics.**
 * Core: legs/torso separation, throttle with reverse, heat model (sinks, vents, snow/water cools), 3 weapon groups (energy, ballistic, missile), lock-on for missiles, 8 component hit zones, jump jets, nav points, simple mech lab (swap 4 hardpoints within tonnage).
-* Garnish: night mission with thermal vision, ejection seat on death, salvage.
+* Core (Santa Claude): escort AI with its own HP and route choice, radio advice (subtitled, original lines), coolant air-drop support call (1 per mission). If the crawler is destroyed, mission 1 restarts from the last checkpoint with Santa Claude saying "Let's try that again, I believe in you."
+* Garnish: night mission with thermal vision, ejection seat on death, salvage, Santa Claude's "present" crates hiding upgrade parts.
 
 **Look.** **Flat-shaded** low-poly terrain and mechs (era signature), fog
 banks, searchlights from the mech's shoulders (shadowed spot lights), PPC-style
 arcs lighting the snow, missile trails. Cockpit glass grime and MFD green.
 
-**Stars.** ★ complete campaign · ★★ never shut down from heat · ★★★ finish duel without losing a component.
+**Snowflakes.** ❄ complete campaign · ❄❄ never shut down from heat · ❄❄❄ finish duel without losing a component.
+
+**Shining Star.** A gift from **Santa Claude** at the end of mission 1, handed over from the crawler's cargo bay with a "ho ho ho".
+
+**Friends' marks.** Your wingmen are **C6P** and **Foen-X** (Foen-X's walker vents hot air from oversized jump jets); the mech-lab paint scheme "**Dr. Doom** Black"; a destroyed enemy walker stencilled "**Bloodmaker** was here".
 
 **Multiplayer & XR.** Versus 2 split / 4 online arena. XR full (seated cockpit, grab throttle).
 

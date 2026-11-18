@@ -5,6 +5,10 @@ candle-lit festive hall with **24 portals**. From **1 to 24 December 2026** one
 more portal opens each day, and behind each one waits a ~20-minute original game
 that celebrates a classic PC/console game from about 25 years ago, re-imagined in
 first person with low-res retro 3D, dynamic lighting and shadows.
+Collect the **Shining Star** hidden in each of the first 23 portals and set them
+into the Star Arch to open the 24th on Christmas Eve, and watch out for the
+marks the crew left everywhere: *"Dr.Doom did this"*, *"Bloodmaker was here"*,
+*"Beware of Messerjocke"*…
 
 * **Tech:** C17 · SDL3 · OpenGL 3.3 / WebGL 2 · Emscripten · WebXR
 * **Targets:** Windows, Linux, Web (touch controls on mobile), WebXR

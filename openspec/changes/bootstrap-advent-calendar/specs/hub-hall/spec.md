@@ -20,7 +20,7 @@ Each portal SHALL display one of the states sealed, thawing, open or mastered ac
 - **THEN** its ice-cracking reveal plays exactly once and the portal shows a live preview afterwards
 
 #### Scenario: Mastered portal
-- **WHEN** the player has earned 3 stars in a portal
+- **WHEN** the player has earned 3 snowflakes in a portal
 - **THEN** the portal shows a golden frame and its ornament hangs on the tree
 
 ### Requirement: Entering a portal
@@ -35,19 +35,22 @@ Walking into an unlocked portal SHALL start that portal's game after a transitio
 - **THEN** the player reappears in front of that portal in the hall
 
 ### Requirement: Progression display
-The hub SHALL display collected stars (0–3 per portal), light one wreath candle per 6 stars (maximum 4), and place one ornament on the tree for each completed portal.
+The hub SHALL display collected snowflakes (0–3 per portal), light one wreath candle per 6 snowflakes (maximum 4), and place one ornament on the tree for each completed portal.
 
 #### Scenario: Candle lighting
-- **WHEN** the player's total stars change from 11 to 12
+- **WHEN** the player's total snowflakes change from 11 to 12
 - **THEN** the second wreath candle is lit
 
 ### Requirement: Christmas Eve epilogue
-The hub SHALL play an epilogue sequence when portal 24 has been completed and at least 24 stars are collected, and SHALL allow replaying it afterwards.
+The hub SHALL play an epilogue sequence when the player places the 24th Shining Star (won in portal 24) on top of the tree, and SHALL allow replaying it afterwards.
 
 #### Scenario: Epilogue trigger
-- **WHEN** portal 24 is completed with a total of 30 stars
-- **THEN** the epilogue plays on return to the hall
+- **WHEN** the player returns from a won portal 24 carrying the 24th Shining Star and uses the tree
+- **THEN** the star is placed on the tree top and the epilogue plays
 
-#### Scenario: Epilogue withheld
-- **WHEN** portal 24 is completed with a total of 20 stars
-- **THEN** the epilogue does not play and the hub indicates 4 more stars are needed
+### Requirement: Wall of Legends
+The hub SHALL contain a Wall of Legends with one plaque per configured friend, showing how many of that friend's marks the player has found and highlighting plaques whose marks are all found.
+
+#### Scenario: Mark found
+- **WHEN** the player registers a new mark of Messerjocke in any portal and returns to the hall
+- **THEN** Messerjocke's plaque shows one more found mark

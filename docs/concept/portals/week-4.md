@@ -36,7 +36,11 @@ dock, Varkh warlord fight (6 min).
 
 **Look.** The **lighting showcase**: saturated coloured lights, coronas, volumetric fog shafts in temples, moving light from a lighthouse beam, water reflections at low res. Detailed 128² textures (higher than others), meshes for all creatures.
 
-**Stars.** ★ finish · ★★ free the Ooli village · ★★★ find all 8 translator logs.
+**Snowflakes.** ❄ finish · ❄❄ free the Ooli village · ❄❄❄ find all 8 translator logs.
+
+**Shining Star.** In the stolen shuttle's cockpit, wedged under the pilot seat.
+
+**Friends' marks.** Translator logs written by fellow prisoner **X-Ray Junkie**; Ooli children chalk "**C6P**" on rocks; Varkh wanted posters "**Beware of Messerjocke**".
 
 **Multiplayer & XR.** Co-op 2 split / 4 online. XR full.
 
@@ -82,7 +86,11 @@ destroy to lower NOEL's alert) → Engineering (5 min, power puzzle) → Cybersp
 lights that sweep with shadows; NOEL's face rendered as a voxel bust that
 glitches on wall screens. Cyberspace: neon wireframe on black.
 
-**Stars.** ★ finish · ★★ security level reduced to 0 % before cyberspace · ★★★ find all 12 logs.
+**Snowflakes.** ❄ finish · ❄❄ security level reduced to 0 % before cyberspace · ❄❄❄ find all 12 logs.
+
+**Shining Star.** Held in NOEL's core in cyberspace; you grab it as the core shatters.
+
+**Friends' marks.** Audio logs by chief scientist **Dr. Doom** and engineer **Bloodmaker**; NOEL calls you "another **C6P**-model mistake"; locker "**Foen-X**: hair dryer, do not borrow".
 
 **Multiplayer & XR.** Solo only by design. XR seated.
 
@@ -123,7 +131,11 @@ Monolith construction and defence or conquest (6 min).
 sun shadows that slide over the 20 minutes (day → golden dusk at Monolith),
 smoke from huts, torchlight at dusk. Buildings change mesh with ages.
 
-**Stars.** ★ win · ★★ win by Monolith · ★★★ hold all 3 relics at the same time.
+**Snowflakes.** ❄ win · ❄❄ win by Monolith · ❄❄❄ hold all 3 relics at the same time.
+
+**Shining Star.** Caught by the Solstice Monolith at first light, or found in the rival town centre's ruins.
+
+**Friends' marks.** The rival chieftain is **Bloodmaker**; relic names "Knife of **Messerjocke**", "Breath of **Foen-X**", "Eye of **X-Ray Junkie**".
 
 **Multiplayer & XR.** 1v1 / 2v2 online lockstep. XR tabletop.
 
@@ -161,7 +173,11 @@ haunted carousel and shooting gallery (7 min) → cathedral of the choir, bell-t
 fires and candles (many dynamic lights, burning enemies are moving light
 sources), snow falling through gaslight. Sprite enemies.
 
-**Stars.** ★ finish · ★★ kill 10 cultists with fire · ★★★ all secrets.
+**Snowflakes.** ❄ finish · ❄❄ kill 10 cultists with fire · ❄❄❄ all secrets.
+
+**Shining Star.** Inside the Hollow Bell; it drops when the bell falls.
+
+**Friends' marks.** Gravestones "**Bloodmaker**" and "**Dr. Doom**"; the carnival knife-throw booth "**Beware of Messerjocke**"; shooting-gallery high score held by **Foen-X**.
 
 **Multiplayer & XR.** Co-op 2 split / online, deathmatch 4. XR seated.
 
@@ -203,7 +219,11 @@ Commander snipe (6 min).
 units, tracer and laser light; you see a big battle from *inside it*. Night
 phase where only weapon fire lights the ice (shadowed explosions).
 
-**Stars.** ★ win · ★★ win without losing your factory · ★★★ kill the enemy Commander with the Disintegrator.
+**Snowflakes.** ❄ win · ❄❄ win without losing your factory · ❄❄❄ kill the enemy Commander with the Disintegrator.
+
+**Shining Star.** The enemy Commander's power core, left in its wreck; reclaim it.
+
+**Friends' marks.** Wrecks named "**C6P**" and "**X-Ray Junkie**" (a radar unit); the enemy AI MERIDIAN signs messages "**Dr.Doom did this**".
 
 **Multiplayer & XR.** 1v1 online lockstep. XR tabletop or embodied commander.
 
@@ -249,7 +269,11 @@ beacon battle, arc-pylon lightning as flickering shadowed lights, ocean with
 reflections, burning wrecks, voxel units. Festive red-gold palette for the
 Republic, white-blue for the Coalition.
 
-**Stars.** ★ win · ★★ win as both factions · ★★★ win on "Krampus" difficulty.
+**Snowflakes.** ❄ win · ❄❄ win as both factions · ❄❄❄ win on "Krampus" difficulty.
+
+**Shining Star.** The 24th Shining Star: won by capturing the Star Beacon; it is carried back to the hall and placed on top of the tree (epilogue).
+
+**Friends' marks.** The FFA AI generals are named after your friends; the end credits: "Special thanks to **Dr. Doom**, **Bloodmaker**, **C6P**, **X-Ray Junkie**, **Messerjocke** and **Foen-X**".
 
 **Multiplayer & XR.** 2v2 split, 1v1 … 4-player FFA online. XR tabletop.
 

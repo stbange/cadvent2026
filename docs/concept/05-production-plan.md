@@ -30,7 +30,7 @@ can't all be ready in 13 days. The calendar format solves this itself:
 
 ## 5.3 Content production per portal (template, ~1–3 dev days with kits)
 
-1. OpenSpec change `add-portal-NN-slug` (goal, rules, win/lose, stars).
+1. OpenSpec change `add-portal-NN-slug` (goal, rules, win/lose, snowflakes, Shining Star location, friends' marks).
 2. Grey-box level in text map format (`.map` brush/grid text) — playable in 2 h.
 3. Mechanic implementation + unit tests (TDD against scenarios).
 4. Bot + scenario scripts; tune to 20 min human / par times.

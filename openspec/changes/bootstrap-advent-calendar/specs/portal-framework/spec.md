@@ -1,7 +1,7 @@
 # Spec Delta
 
 ## Purpose
-The common contract every portal game fulfils: lifecycle, objective, results, stars, saving, declared capabilities and automated play.
+The common contract every portal game fulfils: lifecycle, objective, results, snowflake ratings, saving, declared capabilities and automated play.
 
 ## ADDED Requirements
 
@@ -12,12 +12,12 @@ Every portal SHALL present its goal in an in-world briefing before play and SHAL
 - **WHEN** the player opens the pause menu in any portal
 - **THEN** the current objective text is shown
 
-### Requirement: Session results and stars
-Every portal SHALL end in a won or lost result and SHALL award 0–3 stars: 1 star for completion and up to 2 more for portal-specific conditions defined in that portal's spec.
+### Requirement: Session results and snowflakes
+Every portal SHALL end in a won or lost result and SHALL award a rating of 0–3 snowflakes: 1 for completion and up to 2 more for portal-specific conditions defined in that portal's spec.
 
 #### Scenario: Best result kept
-- **WHEN** the player wins with 1 star after a previous 2-star result
-- **THEN** the stored result for that portal remains 2 stars
+- **WHEN** the player wins with 1 snowflake after a previous 2-snowflake result
+- **THEN** the stored result for that portal remains 2 snowflakes
 
 ### Requirement: Play length
 Every portal SHALL be completable by a first-time player in 15–25 minutes at the default difficulty, as estimated by its pace-mode completion bot and validated by playtests.
@@ -59,4 +59,4 @@ Every portal SHALL offer at least a story difficulty (reduced challenge, generou
 
 #### Scenario: Story mode selection
 - **WHEN** the player selects story difficulty
-- **THEN** damage received is reduced and the portal can still be completed for 1 star
+- **THEN** damage received is reduced and the portal can still be completed for 1 snowflake and its Shining Star

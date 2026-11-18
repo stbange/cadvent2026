@@ -20,7 +20,7 @@ No original names, characters, logos, maps, sounds or music are reused (see
 
 | Pillar | What it means in practice |
 |---|---|
-| **One a day, done in 20** | Each portal has a clear goal, a beginning, a climax and an end screen. A first clear takes 15–25 min; mastery (3 stars) invites replays. |
+| **One a day, done in 20** | Each portal has a clear goal, a beginning, a climax and an end screen. A first clear takes 15–25 min; mastery (3 snowflakes) invites replays. |
 | **First person, always** | RTS, isometric, top-down and third-person originals are re-framed (commander on the battlefield, squad leader, hive-eye, cockpit…). The re-framing *is* the creative core of each design. |
 | **Retro but alive** | Low internal resolution, chunky texels, palette-quantised post-processing — but with real-time dynamic lights, shadow maps, fog and particle light. "How we *remember* those games looked." |
 | **Shared tech, distinct soul** | Five reusable gameplay kits (FPS, RTS, Vehicle, RPG/Tactics, Platformer) keep 24 games feasible; each portal still gets at least one mechanic nobody else has. |
@@ -64,21 +64,26 @@ in December".
 |---|---|---|---|
 | **Sealed** | before its day | Frozen solid; day number glows faintly under the ice; a countdown on the brass plate. | Touching it shows "Opens in 3 days 4 h". |
 | **Thawing** | day has come, never entered | Ice cracks with a light-shaft burst the first time you look at it that day (once-per-portal moment), then reveals a swirling preview. | Walk in to play. |
-| **Open** | entered at least once | A live **render-to-texture preview** of the game's attract mode loops inside the arch, lit in that game's palette. | Walk in; plate shows best time / stars. |
-| **Mastered** | 3 stars | Golden frame, a unique ornament appears on the tree. | — |
+| **Open** | entered at least once | A live **render-to-texture preview** of the game's attract mode loops inside the arch, lit in that game's palette. | Walk in; plate shows best time, snowflakes and whether its Shining Star was found. |
+| **Mastered** | 3 snowflakes | Golden frame, a unique ornament appears on the tree. | — |
 
 ### Progression & rewards
 
-* Each portal awards **0–3 stars** (1 = completed, 2 = completed under a par
-  condition, 3 = a portal-specific mastery challenge, e.g. "no saves", "all
-  secrets", "win with ≤ 8 units").
-* Stars light candles on the **Advent wreath** above the entrance (one candle per
-  6 stars collected, i.e. 4 candles × 18 stars).
+* Each portal awards a rating of **0–3 snowflakes ❄** (1 = completed,
+  2 = completed under a par condition, 3 = a portal-specific mastery challenge,
+  e.g. "no saves", "all secrets", "win with ≤ 8 units").
+* Snowflakes light candles on the **Advent wreath** above the entrance (one
+  candle per 6 snowflakes collected, i.e. 4 candles × 18 snowflakes).
+* Every portal 1–23 holds one collectible **Shining Star**, the key to Day 24
+  (see [§1.5](#15-the-23-shining-stars-and-the-24th-portal)).
+* Players' friends turn up everywhere as tags, names and graffiti (see
+  [06-friends-marks.md](06-friends-marks.md)); found marks fill the
+  **Wall of Legends** in the hall.
 * Every completed portal hangs a themed **ornament** on the tree (voxel model).
   The tree is the trophy cabinet.
-* **Christmas Eve epilogue**: when Day 24 is completed and at least 24 stars are
-  collected, the tree's star ignites and the hall's roof opens to a night-sky
-  credits sequence flying past all 24 worlds.
+* **Christmas Eve epilogue**: completing Day 24 wins the **24th Shining
+  Star**. The player carries it to the top of the tree; the star ignites and the
+  hall's roof opens to a night-sky credits sequence flying past all 24 worlds.
 * After 24 December all portals remain open forever; a "Boxing Day" mode adds
   speed-run timers and a combined 24-portal marathon.
 
@@ -91,12 +96,16 @@ in December".
   polar bear knight, a gingerbread robot, a krampus-ish goat, a snow witch, an
   elf mechanic — all CC BY 4.0 voxel models).
 * **Gramophone**: jukebox for the original soundtrack of unlocked portals.
+* **Wall of Legends** (east gallery): six carved plaques, one per friend
+  (Dr. Doom, Bloodmaker, C6P, X-Ray Junkie, Messerjocke, Foen-X). Every friend's
+  mark found inside a portal adds a glowing notch to that friend's plaque.
+* **Star Arch** (north apse): the 23 star sockets around portal 24, see §1.5.
 
 ## 1.4 The calendar rule
 
 * The unlock rule is evaluated against the **device's local date** (so friends
   in different time zones unlock at their own midnight).
-* Portal *n* (1 ≤ n ≤ 24) is unlocked iff `local_date ≥ 2026-12-n` .
+* Portal *n* (1 ≤ n ≤ 23) is unlocked iff `local_date ≥ 2026-12-n`. Portal 24 additionally needs all 23 Shining Stars set into the Star Arch (§1.5).
 * Before 1 Dec 2026 the hall is visitable in "teaser" mode (all sealed, Day 1 countdown).
 * Clock-tampering is *not* fought (it's a gift for friends), but the web build
   can optionally ask a tiny time endpoint, and a build flag
@@ -104,7 +113,36 @@ in December".
   tests. The year is a build constant so the project can be re-run as
   *cAdvent 2027* with new portals.
 
-## 1.5 Session flow
+## 1.5 The 23 Shining Stars and the 24th portal
+
+The Shining Stars are the meta-quest that ties the calendar together.
+
+* **One star per portal 1–23**, a physical, glowing pickup (voxel star with its
+  own dynamic light) that is won at the portal's climax. Each portal's design
+  says exactly where (e.g. Day 1: it tumbles out of the exploding Light Siphon;
+  Day 6: Santa Claude hands it over). Completing a portal at any difficulty,
+  including story mode, always makes the star reachable, so nobody gets
+  stuck.
+* The star must be **picked up and carried out**. It is saved the moment the
+  player leaves the portal with it (a won result without picking the star up is
+  possible but leaves the socket empty; the portal's plate then shows a hint).
+* **The Star Arch**: portal 24 in the north apse is framed by **23 numbered
+  sockets**. Back in the hall, the player walks to the arch and presses *use*; every
+  carried star flies into the socket of its day with a chime. Stars glow in their
+  socket and cast light across the apse, so the apse gets brighter through December.
+* **Portal 24 opens only if both conditions hold:** the date is 24 Dec 2026 or
+  later **and** all 23 sockets are filled. On 24 Dec with missing stars, the arch
+  shows which days are still missing, and light beams in the hall point to those
+  portals.
+* **Inside portal 24** the 24th Shining Star is won (capturing the Star Beacon) and
+  placed on the top of the tree, which triggers the epilogue.
+* **Multiplayer**: a star picked up in co-op counts for every participant's
+  save. In versus portals each player who finishes the match (win or lose)
+  gets it, so friends never block each other. In a shared hub session anyone can
+  set their own stars; the arch shows the host's sockets.
+* **Dev/test override**: `?dev=unlockall` also fills all sockets (marked "DEV").
+
+## 1.6 Session flow
 
 1. Title card → "Press any key / Tap to enter" (doubles as audio-unlock on web).
 2. Spawn at the entrance, the newest unlocked portal is highlighted by a
@@ -113,8 +151,9 @@ in December".
    hub to game palette) → game-specific **briefing** (in-world, never a
    flat menu: a CRT, a parchment, a radio…).
 4. Play. Pause menu: resume, restart checkpoint, controls, return to hall.
-5. End screen in the game's own UI style → stars → back to the hall,
-   ornament flies to the tree.
+5. End screen in the game's own UI style → snowflakes → back to the hall,
+   ornament flies to the tree; a newly found Shining Star floats above the
+   player's head until it is set into its socket at the Star Arch.
 
 Saves: per-portal checkpoint + best results; stored in a small text save file
 (desktop: user data dir via `SDL_GetPrefPath`; web: IDBFS-backed file).

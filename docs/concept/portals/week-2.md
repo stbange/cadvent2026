@@ -31,7 +31,11 @@ defeated players pop into a puff of confetti.
 lights, a few shadowed lamp posts), snow on roofs, warm stalls vs cold
 alleys. Muted palette, crisp sprite-free mesh characters (low-poly with 1 texture).
 
-**Stars.** ★ win the match · ★★ win both halves · ★★★ win a round with a 1v3 clutch or a pistol-round ace.
+**Snowflakes.** ❄ win the match · ❄❄ win both halves · ❄❄❄ win a round with a 1v3 clutch or a pistol-round ace.
+
+**Shining Star.** Sits on top of the market's giant tree; a jump route to it opens only in the post-match celebration of a won match.
+
+**Friends' marks.** The bot rosters are your friends: **Dr. Doom**, **Bloodmaker**, **C6P**, **X-Ray Junkie**, **Messerjocke** and **Foen-X** split across both teams (Messerjocke loves knife kills); spray tags "**Dr.Doom did this**" appear on walls.
 
 **Multiplayer & XR.** The flagship MP portal: 2v2 split with bots, 5v5 online (bots fill). XR full.
 
@@ -74,7 +78,11 @@ frosted glass labs, blinking consoles (dozens of small lights). The cascade
 moment flips lighting to a pulsating violet with strong shadows. Soldiers
 meshes, skitterlings as sprites.
 
-**Stars.** ★ finish · ★★ all 3 scientists survive · ★★★ under 16 min.
+**Snowflakes.** ❄ finish · ❄❄ all 3 scientists survive · ❄❄❄ under 16 min.
+
+**Shining Star.** The Lumen Shard's purest fragment, ejected when you reverse the beam; it falls at your feet on the antenna platform.
+
+**Friends' marks.** The test chamber door: "**Dr. Doom** — Resonance Lab, DO NOT ENTER"; the radiology room nameplate "**X-Ray Junkie**" (a scanner reveals hidden skitterlings); maintenance bot **C6P** sweeps the lobby, mumbling.
 
 **Multiplayer & XR.** Co-op 2. XR full.
 
@@ -109,7 +117,11 @@ fog, chunky angular armour meshes in tribal colours; disc projectiles are bright
 point lights that light the snow as they fly. Bases are fortresses with
 generators that glow (and go dark when destroyed).
 
-**Stars.** ★ win · ★★ win 5–0 · ★★★ make a capture with flag-carry speed > 150 km/h.
+**Snowflakes.** ❄ win · ❄❄ win 5–0 · ❄❄❄ make a capture with flag-carry speed > 150 km/h.
+
+**Shining Star.** The match trophy: after the win it spawns at centre field and must be carried home like a flag on a victory lap.
+
+**Friends' marks.** Bots include your friends; the steepest slope is the "**Foen-X** Halfpipe"; the kill-feed calls mid-air disc kills "**Bloodmaker** special".
 
 **Multiplayer & XR.** 2v2 split, 4v4 online CTF with bots. XR seated (speed!) with strong vignette.
 
@@ -151,7 +163,11 @@ district (6 min)* steal a hover-car, relay 2 in a factory; *Halcyon Tower
 (many lights), car headlights with shadows, holographic ads. Voxel-destructible
 building frontages. Low res, dark purple/cyan palette.
 
-**Stars.** ★ complete · ★★ no agent lost · ★★★ 30+ persuaded followers at once.
+**Snowflakes.** ❄ complete · ❄❄ no agent lost · ❄❄❄ 30+ persuaded followers at once.
+
+**Shining Star.** Hidden inside the Halcyon Tower broadcast antenna; hacking relay 3 opens the casing.
+
+**Friends' marks.** Neon ad "**C6P** Cybernetics — upgrade now!"; alley graffiti "**Messerjocke was here**"; one agent's codename is **X-Ray Junkie** (sees through walls with overclock).
 
 **Multiplayer & XR.** Co-op 2 split (each controls 2 agents), 4 online. XR seated.
 
@@ -172,7 +188,7 @@ firmware virus. Pilot *Jun Arkwright* flies the ice-cutter ship **Rimecutter-9**
 
 **First-person adaptation.** Native.
 
-**Goal.** Rescue all 6 trapped miners (optional but needed for stars), collect 3
+**Goal.** Rescue all 6 trapped miners (optional but needed for snowflakes), collect 3
 keys, destroy the reactor core, escape within 45 s.
 
 **20-minute flow.** Mine level 1 "Glacier Shafts" (8 min), level 2 "The
@@ -186,7 +202,11 @@ Core Hollow" (10 min) with the reactor boss and escape run (2 min).
 walls with blue-green fluorescence, flares and laser bolts as the main lights (dark
 tunnels make dynamic light essential); shadowed headlight spot.
 
-**Stars.** ★ escape · ★★ all miners rescued · ★★★ escape with > 20 s left.
+**Snowflakes.** ❄ escape · ❄❄ all miners rescued · ❄❄❄ escape with > 20 s left.
+
+**Shining Star.** Embedded in the reactor core; it breaks free when the reactor blows and must be grabbed during the escape.
+
+**Friends' marks.** Trapped miners' name tags include **X-Ray Junkie** and **C6P**; mine sector "**Bloodmaker** Shaft"; automap note "**Beware of Messerjocke**" at a driller-bot nest.
 
 **Multiplayer & XR.** Co-op 2 split / 4 online, "anarchy" dogfight. XR full (seated 6DOF; comfort options mandatory).
 
@@ -228,7 +248,11 @@ around the player** (a shadowed point light on the character) with everything
 beyond fading to black; ice caves glow faintly. Enemies as 8-dir sprites;
 loot items as tiny voxel models with rarity-coloured glints.
 
-**Stars.** ★ defeat the Bishop · ★★ on "Nightmare" difficulty · ★★★ find a unique (gold) item and win without dying.
+**Snowflakes.** ❄ defeat the Bishop · ❄❄ on "Nightmare" difficulty · ❄❄❄ find a unique (gold) item and win without dying.
+
+**Shining Star.** Dropped by the Pale Bishop; glows gold in the inventory.
+
+**Friends' marks.** Village gravestone "Here lies **Bloodmaker**, he made too much"; unique item "**Messerjocke**'s Whittling Knife"; the healer is old **Foen-X** ("keep warm, child").
 
 **Multiplayer & XR.** Co-op 2 split / 4 online. XR seated.
 

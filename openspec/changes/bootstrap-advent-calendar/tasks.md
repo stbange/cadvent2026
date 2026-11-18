@@ -39,12 +39,14 @@
 - [ ] 5.1 Calendar unlock rule, season states, countdown, dev override — with unit tests per scenario
 - [ ] 5.2 Hall level (greybox → art): galleries, balcony, apse, tree, wreath, notice board
 - [ ] 5.3 Portal states (sealed/thawing/open/mastered), render-to-texture previews, entry/return flow
-- [ ] 5.4 Progression: stars, candles, ornaments, epilogue trigger — with unit tests
-- [ ] 5.5 Hub walker bot and scenario scripts (reach portal 24 within 40 s, sealed portal blocks entry)
+- [ ] 5.4 Progression: snowflakes, candles, ornaments, epilogue trigger — with unit tests
+- [ ] 5.5 Shining Star pickup/save, Star Arch sockets, portal 24 gate, tree crowning — with unit tests per scenario
+- [ ] 5.6 Friends config file, mark entities, Wall of Legends, content checker (≥ 2 marks per portal, ≥ 12 portals per friend) — with unit tests
+- [ ] 5.7 Hub walker bot and scenario scripts (reach portal 24 within 40 s, sealed portal blocks entry)
 
 ## 6. Portal framework & kits
 
-- [ ] 6.1 Portal descriptor, arena lifecycle, results/stars, checkpoints, difficulty — with unit tests
+- [ ] 6.1 Portal descriptor, arena lifecycle, results/snowflakes, checkpoints, difficulty — with unit tests
 - [ ] 6.2 Scenario DSL (.gts) interpreter and headless runner — with unit tests
 - [ ] 6.3 Replay recorder/player and cross-platform hash comparison job
 - [ ] 6.4 FPS kit (needed for Day 1) — with unit tests
