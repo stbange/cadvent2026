@@ -14,9 +14,13 @@
 
 enum {
     CADV_CELL_OPEN = 0,
-    CADV_CELL_BLOCKED = 1, /* cliffs, water, rocks */
-    CADV_CELL_BUILDING = 2
+    CADV_CELL_BLOCKED = 1, /* cliffs, rocks, trees, mines */
+    CADV_CELL_BUILDING = 2,
+    CADV_CELL_WATER = 3    /* only naval units sail here */
 };
+
+/* Resource kinds a cell can hold (0 is the classic single resource). */
+#define CADV_RTS_RESOURCES 3
 
 typedef struct cadv_rts_grid {
     int w, h;
@@ -25,6 +29,9 @@ typedef struct cadv_rts_grid {
     int8_t owner[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];     /* building owner, -1 = none */
     int16_t building[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX]; /* building id, -1 = none */
     uint16_t ore[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];     /* resource left in the cell */
+    uint8_t ore_kind[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX]; /* which resource (0..2) */
+    uint8_t ore_block[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];/* 1: blocks movement until depleted (trees) */
+    uint32_t version;                                         /* bumped when passability changes */
 } cadv_rts_grid;
 
 typedef struct cadv_cell { int x, z; } cadv_cell;
@@ -43,8 +50,16 @@ cadv_cell cadv_rts_cell_at(const cadv_rts_grid *g, float wx, float wz);
 void cadv_rts_cell_centre(const cadv_rts_grid *g, cadv_cell c, float *wx, float *wz);
 void cadv_rts_set_blocked(cadv_rts_grid *g, int x0, int z0, int x1, int z1);
 void cadv_rts_add_ore(cadv_rts_grid *g, int cx, int cz, int radius, int amount);
-/* Passable for ground units (ore cells are passable). */
+/* Passable for ground units (open ore cells are passable). */
 bool cadv_rts_passable(const cadv_rts_grid *g, int x, int z);
+/* Passable for naval units (water) or ground units. */
+bool cadv_rts_passable_for(const cadv_rts_grid *g, int x, int z, bool naval);
+/* Resource of 'kind' on every cell of a rectangle; 'blocking' resources
+ * (trees, a mine, a platform) are impassable until mined out. */
+void cadv_rts_add_resource(cadv_rts_grid *g, int x0, int z0, int x1, int z1, int kind, int amount, bool blocking);
+void cadv_rts_set_water(cadv_rts_grid *g, int x0, int z0, int x1, int z1, bool water);
+/* Nearest cell holding resource 'kind'; false if none left. */
+bool cadv_rts_nearest_resource(const cadv_rts_grid *g, int x, int z, int kind, cadv_cell *out);
 /* Placement: inside the map, every footprint cell open and free of ore, and
  * (unless 'first') within 'reach' cells of a building the owner already has. */
 cadv_place_result cadv_rts_can_place(const cadv_rts_grid *g, int x, int z, int fw, int fh, int owner, int reach, bool first);
@@ -59,5 +74,7 @@ bool cadv_rts_nearest_ore(const cadv_rts_grid *g, int x, int z, cadv_cell *out);
  * -1 if unreachable or the path is longer than 'max'. When b itself is not
  * passable (a building), the path ends next to it. */
 int cadv_rts_path(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *out, int max);
+/* The same for naval units (over water cells). */
+int cadv_rts_path_for(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *out, int max, bool naval);
 
 #endif

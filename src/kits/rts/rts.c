@@ -114,6 +114,9 @@ int cadv_rts_add_unit(cadv_rts *r, int owner, int def, float x, float z)
             u->z = z;
             u->hp = r->udefs[def].hp;
             u->target = -1;
+            u->carrier = -1;
+            u->res_cell.x = -1;
+            u->res_cell.z = -1;
             if (r->udefs[def].harvester) {
                 u->order = CADV_ORDER_HARVEST;
                 u->hstate = CADV_HARV_SEEK;
@@ -150,14 +153,30 @@ bool cadv_rts_queue(cadv_rts *r, int side, bool building, int def)
     cadv_rts_side *sd = &r->side[side];
     int k = building ? 0 : 1;
     int cost = building ? r->bdefs[def].cost : r->udefs[def].cost;
+    int lumber = building ? r->bdefs[def].lumber : r->udefs[def].lumber;
+    int tallow = building ? r->bdefs[def].tallow : r->udefs[def].tallow;
     if (sd->queued[k] >= CADV_RTS_QUEUE || (!building && !cadv_rts_can_train(r, side, def))) {
         return false;
     }
-    if (sd->credits < cost) {
+    if (sd->credits < cost || sd->lumber < lumber || sd->tallow < tallow) {
         r->events[side] |= CADV_RTS_EV_BROKE;
         return false;
     }
+    if (!building && r->use_supply) {
+        int queued = 0;
+        int i;
+        cadv_rts_update_supply(r, side);
+        for (i = 0; i < sd->queued[1]; ++i) {
+            queued += r->udefs[sd->queue[1][i].def].supply;
+        }
+        if (sd->supply_used + queued + r->udefs[def].supply > sd->supply_cap) {
+            r->events[side] |= CADV_RTS_EV_SUPPLY;
+            return false;
+        }
+    }
     sd->credits -= cost;
+    sd->lumber -= lumber;
+    sd->tallow -= tallow;
     sd->queue[k][sd->queued[k]].building = building;
     sd->queue[k][sd->queued[k]].def = def;
     sd->queue[k][sd->queued[k]].progress = 0;
@@ -175,6 +194,8 @@ bool cadv_rts_cancel(cadv_rts *r, int side, bool building)
     }
     q = &sd->queue[k][--sd->queued[k]];
     sd->credits += q->building ? r->bdefs[q->def].cost : r->udefs[q->def].cost;
+    sd->lumber += q->building ? r->bdefs[q->def].lumber : r->udefs[q->def].lumber;
+    sd->tallow += q->building ? r->bdefs[q->def].tallow : r->udefs[q->def].tallow;
     return true;
 }
 
@@ -266,7 +287,30 @@ static cadv_cell unit_cell(const cadv_rts *r, const cadv_rts_unit *u) { return c
 
 static void plan(cadv_rts *r, cadv_rts_unit *u, cadv_cell goal)
 {
-    int n = cadv_rts_path(&r->grid, unit_cell(r, u), goal, u->path, CADV_RTS_UNIT_PATH);
+    bool naval = r->udefs[u->def].naval;
+    int n = cadv_rts_path_for(&r->grid, unit_cell(r, u), goal, u->path, CADV_RTS_UNIT_PATH, naval);
+    if (n < 0 && naval && !cadv_rts_passable_for(&r->grid, goal.x, goal.z, true)) {
+        /* a boat sent ashore heads for the water closest to that point */
+        int ring;
+        for (ring = 1; ring <= 5 && n < 0; ++ring) {
+            int dx;
+            int dz;
+            int best = -1;
+            cadv_cell bc = goal;
+            for (dz = -ring; dz <= ring; ++dz) {
+                for (dx = -ring; dx <= ring; ++dx) {
+                    if (cadv_rts_passable_for(&r->grid, goal.x + dx, goal.z + dz, true) && (best < 0 || dx * dx + dz * dz < best)) {
+                        best = dx * dx + dz * dz;
+                        bc.x = goal.x + dx;
+                        bc.z = goal.z + dz;
+                    }
+                }
+            }
+            if (best >= 0) {
+                n = cadv_rts_path_for(&r->grid, unit_cell(r, u), bc, u->path, CADV_RTS_UNIT_PATH, true);
+            }
+        }
+    }
     u->goal = goal;
     u->path_pos = 0;
     u->path_len = n < 0 ? 0 : n;
@@ -343,7 +387,7 @@ static void spawn_from_factory(cadv_rts *r, int side, int def)
     /* first passable cell on the ring around the footprint, south side first */
     for (z = r->b[f].z + d->fh; z >= r->b[f].z - 1; --z) {
         for (x = r->b[f].x - 1; x <= r->b[f].x + d->fw; ++x) {
-            if (cadv_rts_passable(&r->grid, x, z)) {
+            if (cadv_rts_passable_for(&r->grid, x, z, r->udefs[def].naval)) {
                 cadv_cell c = {x, z};
                 float wx;
                 float wz;
@@ -351,6 +395,7 @@ static void spawn_from_factory(cadv_rts *r, int side, int def)
                 cadv_rts_cell_centre(&r->grid, c, &wx, &wz);
                 u = cadv_rts_add_unit(r, side, def, wx, wz);
                 if (u >= 0) {
+                    ++r->side[side].units_built;
                     r->events[side] |= CADV_RTS_EV_UNIT_READY;
                     if (r->side[side].rally_x >= 0 && !r->udefs[def].harvester) {
                         cadv_cell g = {r->side[side].rally_x, r->side[side].rally_z};
@@ -420,7 +465,7 @@ static bool follow_path(cadv_rts *r, cadv_rts_unit *u)
         return true;
     }
     next = u->path[u->path_pos];
-    if (!cadv_rts_passable(&r->grid, next.x, next.z)) {
+    if (!cadv_rts_passable_for(&r->grid, next.x, next.z, r->udefs[u->def].naval)) {
         plan(r, u, u->goal); /* something was built in the way */
         return u->path_len == 0 && u->repath == 0;
     }
@@ -454,7 +499,7 @@ static bool target_pos(const cadv_rts *r, int target, int owner, float *x, float
         *pad = 0.5f * (float)(d->fw > d->fh ? d->fw : d->fh) * r->grid.size;
         return true;
     }
-    if (target >= 0 && target < CADV_RTS_MAX_UNITS && r->u[target].alive && r->u[target].owner != owner) {
+    if (target >= 0 && target < CADV_RTS_MAX_UNITS && r->u[target].alive && r->u[target].owner != owner && r->u[target].carrier < 0) {
         *x = r->u[target].x;
         *z = r->u[target].z;
         *pad = 0.0f;
@@ -470,7 +515,7 @@ static int nearest_enemy(const cadv_rts *r, int owner, float x, float z, float r
     float bd = range;
     for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
         const cadv_rts_unit *e = &r->u[i];
-        if (e->alive && e->owner != owner && e->owner != CADV_RTS_NEUTRAL) {
+        if (e->alive && e->owner != owner && e->owner != CADV_RTS_NEUTRAL && e->carrier < 0) {
             float d = cadv_sqrtf((e->x - x) * (e->x - x) + (e->z - z) * (e->z - z));
             if (d <= bd) {
                 bd = d;
@@ -546,7 +591,19 @@ static bool engage(cadv_rts *r, cadv_rts_unit *u, int target)
     if (!target_pos(r, target, u->owner, &tx, &tz, &pad)) {
         return true; /* gone: nothing more to do */
     }
-    dist = cadv_sqrtf((tx - u->x) * (tx - u->x) + (tz - u->z) * (tz - u->z)) - pad;
+    if (target >= CADV_RTS_TARGET_BUILDING) {
+        /* measure to the footprint's edge, so diagonal neighbours can strike */
+        const cadv_rts_building *b = &r->b[target - CADV_RTS_TARGET_BUILDING];
+        const cadv_rts_bdef *bd = &r->bdefs[b->def];
+        float x0 = (float)b->x * r->grid.size;
+        float z0 = (float)b->z * r->grid.size;
+        float ex = cadv_maxf(cadv_maxf(x0 - u->x, u->x - (x0 + (float)bd->fw * r->grid.size)), 0.0f);
+        float ez = cadv_maxf(cadv_maxf(z0 - u->z, u->z - (z0 + (float)bd->fh * r->grid.size)), 0.0f);
+        dist = cadv_sqrtf(ex * ex + ez * ez);
+        (void)pad;
+    } else {
+        dist = cadv_sqrtf((tx - u->x) * (tx - u->x) + (tz - u->z) * (tz - u->z)) - pad;
+    }
     if (dist > d->range) {
         return false;
     }
@@ -568,6 +625,28 @@ static bool adjacent_to(const cadv_rts *r, const cadv_rts_unit *u, int bi)
     return c.x >= b->x - 1 && c.x <= b->x + d->fw && c.z >= b->z - 1 && c.z <= b->z + d->fh;
 }
 
+static int nearest_refinery(const cadv_rts *r, const cadv_rts_unit *u)
+{
+    int i;
+    int best = -1;
+    float bd = 1e9f;
+    for (i = 0; i < CADV_RTS_MAX_BUILDINGS; ++i) {
+        const cadv_rts_building *b = &r->b[i];
+        if (b->alive && b->owner == u->owner && (r->bdefs[b->def].flags & CADV_BF_REFINERY)) {
+            float x = ((float)b->x + 0.5f * (float)r->bdefs[b->def].fw) * r->grid.size;
+            float z = ((float)b->z + 0.5f * (float)r->bdefs[b->def].fh) * r->grid.size;
+            float d = (x - u->x) * (x - u->x) + (z - u->z) * (z - u->z);
+            if (d < bd) {
+                bd = d;
+                best = i;
+            }
+        }
+    }
+    return best;
+}
+
+static bool near_cell(cadv_cell a, cadv_cell b) { return a.x - b.x <= 1 && b.x - a.x <= 1 && a.z - b.z <= 1 && b.z - a.z <= 1; }
+
 static void tick_harvester(cadv_rts *r, int idx)
 {
     cadv_rts_unit *u = &r->u[idx];
@@ -577,7 +656,15 @@ static void tick_harvester(cadv_rts *r, int idx)
     switch (u->hstate) {
     case CADV_HARV_SEEK: {
         cadv_cell ore;
-        if (u->cargo >= d->carry || !cadv_rts_nearest_ore(&r->grid, c.x, c.z, &ore)) {
+        bool have = u->res_cell.x >= 0 && r->grid.ore[cadv_rts_index(&r->grid, u->res_cell.x, u->res_cell.z)] > 0 &&
+                    r->grid.ore_kind[cadv_rts_index(&r->grid, u->res_cell.x, u->res_cell.z)] == u->res_kind;
+        if (have) {
+            ore = u->res_cell;
+        } else if (u->cargo < d->carry && cadv_rts_nearest_resource(&r->grid, c.x, c.z, u->res_kind, &ore)) {
+            have = true;
+            u->res_cell = ore;
+        }
+        if (u->cargo >= d->carry || !have) {
             u->hstate = u->cargo > 0 ? CADV_HARV_RETURN : CADV_HARV_SEEK;
             u->path_len = 0;
             break;
@@ -588,13 +675,25 @@ static void tick_harvester(cadv_rts *r, int idx)
     }
     case CADV_HARV_TO_ORE:
         if (follow_path(r, u)) {
-            u->hstate = r->grid.ore[cadv_rts_index(&r->grid, c.x, c.z)] > 0 ? CADV_HARV_MINING : CADV_HARV_SEEK;
+            /* work the cell from on top of it, or from beside it for trees and mines */
+            bool ok = u->res_cell.x >= 0 && near_cell(c, u->res_cell) &&
+                      r->grid.ore[cadv_rts_index(&r->grid, u->res_cell.x, u->res_cell.z)] > 0;
+            u->hstate = ok ? CADV_HARV_MINING : CADV_HARV_SEEK;
+            if (!ok) {
+                u->res_cell.x = -1;
+            }
             u->timer = 30;
         }
         break;
     case CADV_HARV_MINING:
         if (--u->timer <= 0) {
-            int got = cadv_rts_mine(&r->grid, c.x, c.z, d->carry / 10 > 0 ? d->carry / 10 : 1);
+            int i = cadv_rts_index(&r->grid, u->res_cell.x, u->res_cell.z);
+            int got;
+            u->cargo_kind = r->grid.ore_kind[i];
+            got = cadv_rts_mine(&r->grid, u->res_cell.x, u->res_cell.z, d->carry / 10 > 0 ? d->carry / 10 : 1);
+            if (got > 0 && r->grid.ore[i] == 0) {
+                r->events[u->owner] |= CADV_RTS_EV_FELLED;
+            }
             u->cargo += got;
             u->timer = 30;
             if (u->cargo >= d->carry) {
@@ -602,11 +701,13 @@ static void tick_harvester(cadv_rts *r, int idx)
                 u->path_len = 0;
             } else if (got == 0) {
                 u->hstate = CADV_HARV_SEEK; /* cell exhausted: find more */
+                u->res_cell.x = -1;
             }
         }
         break;
     case CADV_HARV_RETURN:
-        if (!has_flag(r, u->owner, CADV_BF_REFINERY, &ref)) {
+        ref = nearest_refinery(r, u);
+        if (ref < 0) {
             break; /* wait for a refinery */
         }
         if (adjacent_to(r, u, ref)) {
@@ -627,9 +728,16 @@ static void tick_harvester(cadv_rts *r, int idx)
         if (--u->timer <= 0) {
             int chunk = d->carry / 10 > 25 ? d->carry / 10 : 25;
             int part = u->cargo < chunk ? u->cargo : chunk;
+            cadv_rts_side *sd = &r->side[u->owner];
             u->cargo -= part;
-            r->side[u->owner].credits += part;
-            r->side[u->owner].harvested += part;
+            if (u->cargo_kind == 1) {
+                sd->lumber += part;
+            } else if (u->cargo_kind == 2) {
+                sd->tallow += part;
+            } else {
+                sd->credits += part;
+            }
+            sd->harvested += part;
             r->events[u->owner] |= CADV_RTS_EV_UNLOAD;
             u->timer = 15;
             if (u->cargo == 0) {
@@ -638,6 +746,115 @@ static void tick_harvester(cadv_rts *r, int idx)
         }
         break;
     }
+}
+
+int cadv_rts_resource(const cadv_rts *r, int side, int kind)
+{
+    return kind == 1 ? r->side[side].lumber : kind == 2 ? r->side[side].tallow : r->side[side].credits;
+}
+
+void cadv_rts_update_supply(cadv_rts *r, int side)
+{
+    int i;
+    cadv_rts_side *sd = &r->side[side];
+    sd->supply_used = 0;
+    sd->supply_cap = 0;
+    for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
+        if (r->u[i].alive && r->u[i].owner == side) {
+            sd->supply_used += r->udefs[r->u[i].def].supply;
+        }
+    }
+    for (i = 0; i < CADV_RTS_MAX_BUILDINGS; ++i) {
+        if (r->b[i].alive && r->b[i].owner == side) {
+            sd->supply_cap += r->bdefs[r->b[i].def].supply;
+        }
+    }
+}
+
+void cadv_rts_order_harvest_at(cadv_rts *r, int unit, cadv_cell cell)
+{
+    cadv_rts_unit *u = &r->u[unit];
+    if (!cadv_rts_in_bounds(&r->grid, cell.x, cell.z)) {
+        return;
+    }
+    u->res_kind = r->grid.ore_kind[cadv_rts_index(&r->grid, cell.x, cell.z)];
+    u->res_cell = cell;
+    cadv_rts_order_harvest(r, unit);
+}
+
+void cadv_rts_order_board(cadv_rts *r, int unit, int transport)
+{
+    cadv_rts_unit *u = &r->u[unit];
+    u->order = CADV_ORDER_BOARD;
+    u->target = transport;
+    u->path_len = 0;
+    u->repath = 0;
+}
+
+int cadv_rts_unload(cadv_rts *r, int transport)
+{
+    cadv_rts_unit *t = &r->u[transport];
+    cadv_cell c = unit_cell(r, t);
+    int i;
+    int n = 0;
+    for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
+        cadv_rts_unit *p = &r->u[i];
+        int ring;
+        bool placed = false;
+        if (!p->alive || p->carrier != transport) {
+            continue;
+        }
+        for (ring = 1; ring <= 3 && !placed; ++ring) {
+            int dx;
+            int dz;
+            for (dz = -ring; dz <= ring && !placed; ++dz) {
+                for (dx = -ring; dx <= ring && !placed; ++dx) {
+                    if (cadv_rts_passable(&r->grid, c.x + dx, c.z + dz)) {
+                        cadv_cell to = {c.x + dx, c.z + dz};
+                        cadv_rts_cell_centre(&r->grid, to, &p->x, &p->z);
+                        /* spread passengers a little so they do not stack */
+                        p->x += (float)((n % 3) - 1) * 0.6f;
+                        p->z += (float)((n / 3) % 3 - 1) * 0.6f;
+                        p->carrier = -1;
+                        p->order = CADV_ORDER_IDLE;
+                        --t->passengers;
+                        ++n;
+                        placed = true;
+                    }
+                }
+            }
+        }
+    }
+    if (n > 0) {
+        r->events[t->owner] |= CADV_RTS_EV_UNLOADED;
+    }
+    return n;
+}
+
+static void tick_board(cadv_rts *r, int idx)
+{
+    cadv_rts_unit *u = &r->u[idx];
+    cadv_rts_unit *t = &r->u[u->target];
+    float d;
+    if (u->target < 0 || !t->alive || t->owner != u->owner || r->udefs[t->def].capacity <= 0) {
+        cadv_rts_order_stop(r, idx);
+        return;
+    }
+    d = cadv_sqrtf((t->x - u->x) * (t->x - u->x) + (t->z - u->z) * (t->z - u->z));
+    if (d <= 2.3f * r->grid.size) {
+        if (t->passengers < r->udefs[t->def].capacity) {
+            u->carrier = u->target;
+            ++t->passengers;
+            u->x = t->x;
+            u->z = t->z;
+            u->order = CADV_ORDER_IDLE;
+        }
+        return;
+    }
+    if (u->path_pos >= u->path_len || r->ticks % 60 == 0) {
+        plan(r, u, unit_cell(r, t));
+    }
+    follow_path(r, u);
 }
 
 static void tick_unit(cadv_rts *r, int idx)
@@ -651,9 +868,18 @@ static void tick_unit(cadv_rts *r, int idx)
         tick_harvester(r, idx);
         return;
     }
+    if (u->order == CADV_ORDER_BOARD) {
+        tick_board(r, idx);
+        return;
+    }
     if (d->damage <= 0) {
-        if (u->order == CADV_ORDER_MOVE && follow_path(r, u)) {
+        if ((u->order == CADV_ORDER_MOVE || u->order == CADV_ORDER_ATTACK_MOVE) && follow_path(r, u)) {
             u->order = CADV_ORDER_IDLE;
+            /* a transport sent to a shore unloads there */
+            if (d->capacity > 0 && u->passengers > 0 &&
+                !cadv_rts_passable_for(&r->grid, u->goal.x, u->goal.z, d->naval)) {
+                cadv_rts_unload(r, idx);
+            }
         }
         return;
     }
@@ -732,9 +958,24 @@ void cadv_rts_tick(cadv_rts *r)
         }
     }
     for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
-        if (r->u[i].alive) {
-            tick_unit(r, i);
+        cadv_rts_unit *u = &r->u[i];
+        if (!u->alive) {
+            continue;
         }
+        if (u->carrier >= 0) {
+            const cadv_rts_unit *t = &r->u[u->carrier];
+            if (!t->alive) {
+                cadv_rts_damage(r, i, u->hp); /* went down with the boat */
+            } else {
+                u->x = t->x;
+                u->z = t->z;
+            }
+            continue;
+        }
+        tick_unit(r, i);
+    }
+    for (s = 0; s < CADV_RTS_SIDES; ++s) {
+        cadv_rts_update_supply(r, s);
     }
     for (i = 0; i < CADV_RTS_MAX_BUILDINGS; ++i) {
         if (r->b[i].alive && (r->bdefs[r->b[i].def].flags & CADV_BF_DEFENCE)) {
@@ -788,6 +1029,8 @@ uint64_t cadv_rts_hash(const cadv_rts *r)
         int q;
         int k;
         h = cadv_hash_u32(h, (uint32_t)s->credits);
+        h = cadv_hash_u32(h, (uint32_t)s->lumber);
+        h = cadv_hash_u32(h, (uint32_t)s->tallow);
         h = cadv_hash_u32(h, (uint32_t)s->ready_building);
         for (k = 0; k < 2; ++k) {
             h = cadv_hash_u32(h, (uint32_t)s->queued[k]);
@@ -815,6 +1058,7 @@ uint64_t cadv_rts_hash(const cadv_rts *r)
             h = hash_f(h, u->z);
             h = cadv_hash_u32(h, (uint32_t)u->hp);
             h = cadv_hash_u32(h, (uint32_t)u->cargo);
+            h = cadv_hash_u32(h, (uint32_t)(u->carrier + 1));
         }
     }
     return h;

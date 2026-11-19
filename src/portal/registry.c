@@ -7,6 +7,7 @@
 #include "portals/p02_aurora_carpet.h"
 #include "portals/p03_frostfront.h"
 #include "portals/p04_ice_tomb.h"
+#include "portals/p05_hearthguard.h"
 #include "portals/test_range.h"
 
 static const cadv_mark_def k_marks_01[] = {
@@ -165,7 +166,9 @@ static const cadv_portal_desc k_portals[CADV_PORTAL_COUNT] = {
     {4, "p04_ice_tomb", "Ice Tomb of the Winter King", "Tomb Raider (1996)", CADV_CAP_SOLO | CADV_CAP_COOP | CADV_CAP_XR_SEATED,
      true, CADV_P04_STATE_SIZE, cadv_p04_init, cadv_p04_tick, cadv_p04_result, cadv_p04_query, cadv_p04_bot,
      cadv_p04_teleport, MARKS(04)},
-    CADV_TEST_RANGE_DESC(5, "p05_hearthguard", "Hearthguard", "Warcraft II (1995)", CADV_CAP_SOLO|CADV_CAP_VERSUS|CADV_CAP_XR_TABLETOP, MARKS(05)),
+    {5, "p05_hearthguard", "Hearthguard", "Warcraft II (1995)", CADV_CAP_SOLO | CADV_CAP_VERSUS | CADV_CAP_XR_TABLETOP,
+     true, CADV_P05_STATE_SIZE, cadv_p05_init, cadv_p05_tick, cadv_p05_result, cadv_p05_query, cadv_p05_bot,
+     cadv_p05_teleport, MARKS(05)},
     CADV_TEST_RANGE_DESC(6, "p06_iron_yule", "Iron Yule", "MechWarrior 2 (1995)", CADV_CAP_SOLO|CADV_CAP_VERSUS|CADV_CAP_XR_FULL, MARKS(06)),
     CADV_TEST_RANGE_DESC(7, "p07_tinsel_strike", "Tinsel Strike", "Counter-Strike (1999)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_FULL, MARKS(07)),
     CADV_TEST_RANGE_DESC(8, "p08_cascade", "Cascade", "Half-Life (1998)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_FULL, MARKS(08)),

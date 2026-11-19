@@ -76,6 +76,67 @@ bool cadv_rts_passable(const cadv_rts_grid *g, int x, int z)
     return cadv_rts_in_bounds(g, x, z) && g->kind[cadv_rts_index(g, x, z)] == CADV_CELL_OPEN;
 }
 
+bool cadv_rts_passable_for(const cadv_rts_grid *g, int x, int z, bool naval)
+{
+    return cadv_rts_in_bounds(g, x, z) && g->kind[cadv_rts_index(g, x, z)] == (naval ? CADV_CELL_WATER : CADV_CELL_OPEN);
+}
+
+void cadv_rts_add_resource(cadv_rts_grid *g, int x0, int z0, int x1, int z1, int kind, int amount, bool blocking)
+{
+    int x;
+    int z;
+    for (z = z0; z <= z1; ++z) {
+        for (x = x0; x <= x1; ++x) {
+            if (cadv_rts_in_bounds(g, x, z)) {
+                int i = cadv_rts_index(g, x, z);
+                g->ore[i] = (uint16_t)(amount > 65535 ? 65535 : amount);
+                g->ore_kind[i] = (uint8_t)kind;
+                g->ore_block[i] = blocking ? 1u : 0u;
+                if (blocking) {
+                    g->kind[i] = CADV_CELL_BLOCKED;
+                }
+            }
+        }
+    }
+    ++g->version;
+}
+
+void cadv_rts_set_water(cadv_rts_grid *g, int x0, int z0, int x1, int z1, bool water)
+{
+    int x;
+    int z;
+    for (z = z0; z <= z1; ++z) {
+        for (x = x0; x <= x1; ++x) {
+            if (cadv_rts_in_bounds(g, x, z)) {
+                int i = cadv_rts_index(g, x, z);
+                if (g->kind[i] == CADV_CELL_OPEN || g->kind[i] == CADV_CELL_WATER) {
+                    g->kind[i] = water ? CADV_CELL_WATER : CADV_CELL_OPEN;
+                }
+            }
+        }
+    }
+    ++g->version;
+}
+
+bool cadv_rts_nearest_resource(const cadv_rts_grid *g, int x, int z, int kind, cadv_cell *out)
+{
+    int cx;
+    int cz;
+    int best = -1;
+    for (cz = 0; cz < g->h; ++cz) {
+        for (cx = 0; cx < g->w; ++cx) {
+            int i = cadv_rts_index(g, cx, cz);
+            int d = (cx - x) * (cx - x) + (cz - z) * (cz - z);
+            if (g->ore[i] > 0 && g->ore_kind[i] == kind && (best < 0 || d < best)) {
+                best = d;
+                out->x = cx;
+                out->z = cz;
+            }
+        }
+    }
+    return best >= 0;
+}
+
 cadv_place_result cadv_rts_can_place(const cadv_rts_grid *g, int x, int z, int fw, int fh, int owner, int reach, bool first)
 {
     int cx;
@@ -141,6 +202,11 @@ int cadv_rts_mine(cadv_rts_grid *g, int x, int z, int amount)
     i = cadv_rts_index(g, x, z);
     take = amount < (int)g->ore[i] ? amount : (int)g->ore[i];
     g->ore[i] = (uint16_t)((int)g->ore[i] - take);
+    if (g->ore[i] == 0 && g->ore_block[i]) {
+        g->ore_block[i] = 0; /* a felled forest opens a path */
+        g->kind[i] = CADV_CELL_OPEN;
+        ++g->version;
+    }
     return take;
 }
 
@@ -152,7 +218,8 @@ bool cadv_rts_nearest_ore(const cadv_rts_grid *g, int x, int z, cadv_cell *out)
     for (cz = 0; cz < g->h; ++cz) {
         for (cx = 0; cx < g->w; ++cx) {
             int d = (cx - x) * (cx - x) + (cz - z) * (cz - z);
-            if (g->ore[cadv_rts_index(g, cx, cz)] > 0 && (best < 0 || d < best)) {
+            int i = cadv_rts_index(g, cx, cz);
+            if (g->ore[i] > 0 && g->ore_kind[i] == 0 && (best < 0 || d < best)) {
                 best = d;
                 out->x = cx;
                 out->z = cz;
@@ -201,6 +268,11 @@ static bool touches(const cadv_rts_grid *g, int x, int z, cadv_cell b, int build
 
 int cadv_rts_path(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *out, int max)
 {
+    return cadv_rts_path_for(g, a, b, out, max, false);
+}
+
+int cadv_rts_path_for(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *out, int max, bool naval)
+{
     static const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
     static const int dz[8] = {0, 0, 1, -1, 1, -1, 1, -1};
     static node nodes[CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];
@@ -216,7 +288,7 @@ int cadv_rts_path(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *o
     if (a.x == b.x && a.z == b.z) {
         return 0;
     }
-    goal_solid = !cadv_rts_passable(g, b.x, b.z);
+    goal_solid = !cadv_rts_passable_for(g, b.x, b.z, naval);
     goal_building = g->building[cadv_rts_index(g, b.x, b.z)];
     memset(nodes, 0, sizeof(node) * (size_t)(g->w * g->h));
     i = cadv_rts_index(g, a.x, a.z);
@@ -249,10 +321,10 @@ int cadv_rts_path(const cadv_rts_grid *g, cadv_cell a, cadv_cell b, cadv_cell *o
             int nz = cz + dz[k];
             int ni;
             int cost;
-            if (!cadv_rts_passable(g, nx, nz)) {
+            if (!cadv_rts_passable_for(g, nx, nz, naval)) {
                 continue;
             }
-            if (k >= 4 && (!cadv_rts_passable(g, nx, cz) || !cadv_rts_passable(g, cx, nz))) {
+            if (k >= 4 && (!cadv_rts_passable_for(g, nx, cz, naval) || !cadv_rts_passable_for(g, cx, nz, naval))) {
                 continue; /* no squeezing past corners */
             }
             ni = cadv_rts_index(g, nx, nz);

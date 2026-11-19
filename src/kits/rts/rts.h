@@ -36,6 +36,8 @@ typedef struct cadv_rts_bdef {
     int damage;
     int cooldown;       /* ticks between shots */
     int sight;          /* fog of war: cells revealed (0 = 5) */
+    int supply;         /* supply it provides (farms) */
+    int lumber, tallow; /* extra costs (resources 1 and 2) */
 } cadv_rts_bdef;
 
 typedef struct cadv_rts_udef {
@@ -52,9 +54,14 @@ typedef struct cadv_rts_udef {
     uint32_t from;      /* building flag that trains it (0 = factory) */
     int sight;          /* fog of war: cells revealed (0 = 5) */
     bool infantry;
+    int supply;         /* supply it uses */
+    int lumber, tallow; /* extra costs */
+    uint8_t gathers;    /* harvesters: bit per resource kind (0 = kind 0 only) */
+    bool naval;         /* sails on water cells only */
+    int capacity;       /* transports: passengers */
 } cadv_rts_udef;
 
-typedef enum cadv_order { CADV_ORDER_IDLE = 0, CADV_ORDER_MOVE, CADV_ORDER_ATTACK, CADV_ORDER_ATTACK_MOVE, CADV_ORDER_HARVEST } cadv_order;
+typedef enum cadv_order { CADV_ORDER_IDLE = 0, CADV_ORDER_MOVE, CADV_ORDER_ATTACK, CADV_ORDER_ATTACK_MOVE, CADV_ORDER_HARVEST, CADV_ORDER_BOARD } cadv_order;
 
 typedef enum cadv_harvest_state { CADV_HARV_SEEK = 0, CADV_HARV_TO_ORE, CADV_HARV_MINING, CADV_HARV_RETURN, CADV_HARV_UNLOAD } cadv_harvest_state;
 
@@ -84,6 +91,11 @@ typedef struct cadv_rts_unit {
     cadv_harvest_state hstate;
     int cargo;
     int timer;
+    int res_kind;       /* harvesters: what they gather */
+    cadv_cell res_cell; /* the cell they work (-1 = pick the nearest) */
+    int carrier;        /* transport this unit rides in, -1 none */
+    int passengers;     /* transports: units aboard */
+    int cargo_kind;
 } cadv_rts_unit;
 
 #define CADV_RTS_TARGET_BUILDING 1000
@@ -105,6 +117,9 @@ typedef struct cadv_rts_side {
     uint8_t group[CADV_RTS_GROUPS][CADV_RTS_MAX_UNITS]; /* membership flags */
     int harvested;      /* total ore delivered */
     int units_lost;
+    int lumber, tallow; /* resources 1 and 2 (credits is resource 0) */
+    int supply_used, supply_cap;
+    int units_built;
 } cadv_rts_side;
 
 typedef enum cadv_rts_event {
@@ -115,7 +130,10 @@ typedef enum cadv_rts_event {
     CADV_RTS_EV_LOW_POWER = 1 << 4,
     CADV_RTS_EV_UNLOAD = 1 << 5,
     CADV_RTS_EV_SHOT = 1 << 6,
-    CADV_RTS_EV_BROKE = 1 << 7       /* a queue could not be paid */
+    CADV_RTS_EV_BROKE = 1 << 7,      /* a queue could not be paid */
+    CADV_RTS_EV_SUPPLY = 1 << 8,     /* refused: not enough supply */
+    CADV_RTS_EV_FELLED = 1 << 9,     /* a resource cell ran out (trees open paths) */
+    CADV_RTS_EV_UNLOADED = 1 << 10
 } cadv_rts_event;
 
 typedef struct cadv_rts_shot {
@@ -138,6 +156,7 @@ typedef struct cadv_rts {
     int last_lost_unit;
     cadv_rts_shot shots[CADV_RTS_SHOTS];
     int shot_next;
+    bool use_supply;    /* units need supply (farms); off = unlimited */
     uint8_t visible[CADV_RTS_SIDES][CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];
     uint8_t explored[CADV_RTS_SIDES][CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];
 } cadv_rts;
@@ -179,6 +198,15 @@ void cadv_rts_order_move(cadv_rts *r, int unit, cadv_cell goal, bool attack_move
 void cadv_rts_order_attack(cadv_rts *r, int unit, int target);
 void cadv_rts_order_stop(cadv_rts *r, int unit);
 void cadv_rts_order_harvest(cadv_rts *r, int unit);
+/* Harvest the resource on (or next to) a cell; the unit sticks to that kind. */
+void cadv_rts_order_harvest_at(cadv_rts *r, int unit, cadv_cell cell);
+/* Walk to a transport and board it when close enough. */
+void cadv_rts_order_board(cadv_rts *r, int unit, int transport);
+/* Puts every passenger on free land next to the transport; returns how many. */
+int cadv_rts_unload(cadv_rts *r, int transport);
+void cadv_rts_update_supply(cadv_rts *r, int side);
+/* Resource 'kind' (0 credits, 1 lumber, 2 tallow) held by a side. */
+int cadv_rts_resource(const cadv_rts *r, int side, int kind);
 void cadv_rts_group_set(cadv_rts *r, int side, int group, const int *units, int count);
 /* Orders every live member of a group; returns how many were ordered. */
 int cadv_rts_group_move(cadv_rts *r, int side, int group, cadv_cell goal, bool attack_move);

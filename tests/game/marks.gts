@@ -5,5 +5,5 @@ wait 3
 expect portal.marks == 1
 press pause
 wait 2
-expect progress.marks.5 == 1
-expect hub.legend.1 == 1
+expect progress.marks.6 == 1
+expect hub.legend.0 == 1

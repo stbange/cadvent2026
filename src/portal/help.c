@@ -76,6 +76,20 @@ static const cadv_help k_day4 = {
     4,
 };
 
+static const cadv_help k_day5 = {
+    "DAY 5 - HEARTHGUARD",
+    "HOLD KINDLEWICK THROUGH THREE TROLL RAIDS ACROSS THE FROZEN LAKE. WHEN SPRING OPENS THE WATER, "
+    "FERRY YOUR ARMY NORTH, BURN THE RIMEBACK LONGHALL AND CARRY ITS SHINING STAR HOME TO THE HEARTH.",
+    {MOVE, LOOK, {"Q / WHEEL", "LB / RB", "PICK STAVE ITEM"}, {"E", "X", "BUY / PLACE AGAIN"},
+     {"L-MOUSE", "RT", "PLACE / PICK / ORDER"}, {"R-MOUSE", "LT", "SELECT NEAR AIM"}, {"SHIFT", "L3", "ADD / PLAIN MOVE"},
+     {"C", "B", "CLEAR SQUAD"}, {"1 - 4", "-", "GROUP (SHIFT: SET)"}, {"5 / 6", "-", "ARMY / WORKERS"},
+     {"SPACE", "A", "BOARD / LEAVE FERRY"}, {"TAB", "D-UP", "BIG MAP"}, HELP},
+    13,
+    {"FARMS FEED YOUR TROOPS - WATCH THE SUPPLY COUNT.", "WORKERS ON A TREE, MINE OR TALLOW: AIM AND FIRE.",
+     "SQUAD + FIRE ON THE FERRY: ALL ABOARD. ABOARD, FIRE SAILS IT.", "NO SQUAD? FIRE IS A SHIELD BASH."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -103,6 +117,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day3;
     case 4:
         return &k_day4;
+    case 5:
+        return &k_day5;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }

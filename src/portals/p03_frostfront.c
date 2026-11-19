@@ -13,26 +13,26 @@
 
 static const cadv_rts_bdef k_buildings[P03_BUILDINGS] = {
     /* name             fw fh cost  pow  hp    ticks flags                range dmg cool sight */
-    {"Mobile Yard", 3, 3, 0, 10, 1500, 1, CADV_BF_HQ, 0, 0, 0, 7},
-    {"Power Plant", 2, 2, 300, 100, 400, 300, 0, 0, 0, 0, 4},
-    {"Refinery", 3, 2, 1200, -30, 900, 600, CADV_BF_REFINERY, 0, 0, 0, 5},
-    {"Barracks", 2, 2, 300, -20, 500, 360, CADV_BF_BARRACKS, 0, 0, 0, 5},
-    {"War Factory", 3, 3, 1200, -40, 1000, 720, CADV_BF_FACTORY, 0, 0, 0, 5},
-    {"Guard Tower", 1, 1, 500, -20, 400, 360, CADV_BF_DEFENCE, 15.0f, 12, 30, 6},
-    {"Ember Spire", 3, 3, 0, 0, 2400, 1, CADV_BF_HQ, 0, 0, 0, 8},
-    {"Lancer Pylon", 1, 1, 0, -30, 500, 1, CADV_BF_DEFENCE, 16.0f, 18, 60, 7},
-    {"Research Lab", 3, 2, 0, 0, 800, 1, 0, 0, 0, 0, 4},
+    {"Mobile Yard", 3, 3, 0, 10, 1500, 1, CADV_BF_HQ, 0, 0, 0, 7, 0, 0, 0},
+    {"Power Plant", 2, 2, 300, 100, 400, 300, 0, 0, 0, 0, 4, 0, 0, 0},
+    {"Refinery", 3, 2, 1200, -30, 900, 600, CADV_BF_REFINERY, 0, 0, 0, 5, 0, 0, 0},
+    {"Barracks", 2, 2, 300, -20, 500, 360, CADV_BF_BARRACKS, 0, 0, 0, 5, 0, 0, 0},
+    {"War Factory", 3, 3, 1200, -40, 1000, 720, CADV_BF_FACTORY, 0, 0, 0, 5, 0, 0, 0},
+    {"Guard Tower", 1, 1, 500, -20, 400, 360, CADV_BF_DEFENCE, 15.0f, 12, 30, 6, 0, 0, 0},
+    {"Ember Spire", 3, 3, 0, 0, 2400, 1, CADV_BF_HQ, 0, 0, 0, 8, 0, 0, 0},
+    {"Lancer Pylon", 1, 1, 0, -30, 500, 1, CADV_BF_DEFENCE, 16.0f, 18, 60, 7, 0, 0, 0},
+    {"Research Lab", 3, 2, 0, 0, 800, 1, 0, 0, 0, 0, 4, 0, 0, 0},
 };
 
 static const cadv_rts_udef k_units[P03_UNITS] = {
     /* name           cost  hp   speed  range dmg cool ticks harv  carry from               sight infantry */
-    {"Rifleman", 100, 60, 0.060f, 12.0f, 7, 30, 300, false, 0, CADV_BF_BARRACKS, 5, true},
-    {"Rocket Trooper", 250, 50, 0.055f, 18.0f, 30, 90, 420, false, 0, CADV_BF_BARRACKS, 5, true},
-    {"Engineer", 400, 40, 0.060f, 0.0f, 0, 0, 420, false, 0, CADV_BF_BARRACKS, 4, true},
-    {"Harvester", 1200, 600, 0.090f, 0.0f, 0, 0, 900, true, 500, CADV_BF_FACTORY, 4, false},
-    {"Light Tank", 600, 350, 0.100f, 16.0f, 25, 60, 600, false, 0, CADV_BF_FACTORY, 6, false},
-    {"Recon Buggy", 450, 160, 0.160f, 12.0f, 8, 20, 360, false, 0, CADV_BF_FACTORY, 10, false},
-    {"Commander", 0, 300, 0.0f, 0.0f, 0, 0, 1, false, 0, CADV_BF_HQ, 7, true},
+    {"Rifleman", 100, 60, 0.060f, 12.0f, 7, 30, 300, false, 0, CADV_BF_BARRACKS, 5, true, 0, 0, 0, 0, false, 0},
+    {"Rocket Trooper", 250, 50, 0.055f, 18.0f, 30, 90, 420, false, 0, CADV_BF_BARRACKS, 5, true, 0, 0, 0, 0, false, 0},
+    {"Engineer", 400, 40, 0.060f, 0.0f, 0, 0, 420, false, 0, CADV_BF_BARRACKS, 4, true, 0, 0, 0, 0, false, 0},
+    {"Harvester", 1200, 600, 0.090f, 0.0f, 0, 0, 900, true, 500, CADV_BF_FACTORY, 4, false, 0, 0, 0, 0, false, 0},
+    {"Light Tank", 600, 350, 0.100f, 16.0f, 25, 60, 600, false, 0, CADV_BF_FACTORY, 6, false, 0, 0, 0, 0, false, 0},
+    {"Recon Buggy", 450, 160, 0.160f, 12.0f, 8, 20, 360, false, 0, CADV_BF_FACTORY, 10, false, 0, 0, 0, 0, false, 0},
+    {"Commander", 0, 300, 0.0f, 0.0f, 0, 0, 1, false, 0, CADV_BF_HQ, 7, true, 0, 0, 0, 0, false, 0},
 };
 
 static const int k_tab_struct[P03_TAB_STRUCTURES] = {P03_B_POWER, P03_B_REFINERY, P03_B_BARRACKS, P03_B_FACTORY, P03_B_TOWER};

@@ -11,18 +11,18 @@ enum { U_RIFLE, U_HARVESTER, U_TANK, U_ENGINEER, U_COUNT };
 
 static const cadv_rts_bdef k_b[B_COUNT] = {
     /* name        fw fh cost power hp  ticks flags                      range dmg cool */
-    {"Yard", 3, 3, 0, 0, 900, 1, CADV_BF_HQ, 0, 0, 0, 0},
-    {"Power", 2, 2, 300, 100, 400, 100, 0, 0, 0, 0, 0},
-    {"Refinery", 3, 2, 600, -40, 600, 200, CADV_BF_REFINERY, 0, 0, 0, 0},
-    {"Factory", 3, 3, 800, -60, 700, 200, CADV_BF_FACTORY, 0, 0, 0, 0},
-    {"Tower", 1, 1, 400, -30, 300, 100, CADV_BF_DEFENCE, 12.0f, 10, 30, 0},
+    {"Yard", 3, 3, 0, 0, 900, 1, CADV_BF_HQ, 0, 0, 0, 0, 0, 0, 0},
+    {"Power", 2, 2, 300, 100, 400, 100, 0, 0, 0, 0, 0, 0, 0, 0},
+    {"Refinery", 3, 2, 600, -40, 600, 200, CADV_BF_REFINERY, 0, 0, 0, 0, 0, 0, 0},
+    {"Factory", 3, 3, 800, -60, 700, 200, CADV_BF_FACTORY, 0, 0, 0, 0, 0, 0, 0},
+    {"Tower", 1, 1, 400, -30, 300, 100, CADV_BF_DEFENCE, 12.0f, 10, 30, 0, 0, 0, 0},
 };
 static const cadv_rts_udef k_u[U_COUNT] = {
     /* name       cost hp  speed range dmg cool ticks harv  carry */
-    {"Rifle", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, 0, 0, false},
-    {"Harvester", 700, 400, 0.06f, 0.0f, 0, 0, 120, true, 100, 0, 0, false},
-    {"Tank", 600, 300, 0.08f, 14.0f, 40, 60, 120, false, 0, 0, 0, false},
-    {"Engineer", 300, 40, 0.05f, 0.0f, 0, 0, 60, false, 0, 0, 0, false},
+    {"Rifle", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, 0, 0, false, 0, 0, 0, 0, false, 0},
+    {"Harvester", 700, 400, 0.06f, 0.0f, 0, 0, 120, true, 100, 0, 0, false, 0, 0, 0, 0, false, 0},
+    {"Tank", 600, 300, 0.08f, 14.0f, 40, 60, 120, false, 0, 0, 0, false, 0, 0, 0, 0, false, 0},
+    {"Engineer", 300, 40, 0.05f, 0.0f, 0, 0, 60, false, 0, 0, 0, false, 0, 0, 0, 0, false, 0},
 };
 
 static cadv_rts r;
@@ -461,12 +461,12 @@ static void test_rts_kit__neutral_buildings_and_capture(void)
 static void test_rts_kit__barracks_and_factory_queues_run_together(void)
 {
     static const cadv_rts_udef u2[2] = {
-        {"Trooper", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, CADV_BF_BARRACKS, 0, true},
-        {"Tank", 100, 300, 0.08f, 14.0f, 40, 60, 60, false, 0, 0, 0, false},
+        {"Trooper", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, CADV_BF_BARRACKS, 0, true, 0, 0, 0, 0, false, 0},
+        {"Tank", 100, 300, 0.08f, 14.0f, 40, 60, 60, false, 0, 0, 0, false, 0, 0, 0, 0, false, 0},
     };
     static const cadv_rts_bdef b2[2] = {
-        {"Barracks", 2, 2, 100, 0, 400, 50, CADV_BF_BARRACKS, 0, 0, 0, 0},
-        {"Factory", 2, 2, 100, 0, 400, 50, CADV_BF_FACTORY, 0, 0, 0, 0},
+        {"Barracks", 2, 2, 100, 0, 400, 50, CADV_BF_BARRACKS, 0, 0, 0, 0, 0, 0, 0},
+        {"Factory", 2, 2, 100, 0, 400, 50, CADV_BF_FACTORY, 0, 0, 0, 0, 0, 0, 0},
     };
     cadv_rts_init(&r, 40, 40, 2.0f, b2, 2, u2, 2);
     r.side[0].credits = 1000;
@@ -540,6 +540,178 @@ static void test_rts_kit__ai_opponent(void)
     TEST_ASSERT_TRUE(cadv_rts_ai_idle_army(&r, 1) >= 0);
 }
 
+/* ---- Hearthguard-style extensions: three resources, trees, supply, boats ---- */
+
+enum { H_HALL, H_FARM, H_BARRACKS, H_COUNT };
+enum { H_WORKER, H_FOOT, H_FERRY, H_UCOUNT };
+static const cadv_rts_bdef k_hb[H_COUNT] = {
+    {"Hall", 3, 3, 0, 0, 900, 1, CADV_BF_HQ | CADV_BF_REFINERY | CADV_BF_FACTORY, 0, 0, 0, 0, 4, 0, 0},
+    {"Farm", 2, 2, 50, 0, 300, 30, 0, 0, 0, 0, 0, 4, 40, 0},
+    {"Barracks", 2, 2, 100, 0, 400, 30, CADV_BF_BARRACKS, 0, 0, 0, 0, 0, 60, 10},
+};
+static const cadv_rts_udef k_hu[H_UCOUNT] = {
+    {"Worker", 50, 40, 0.06f, 0.0f, 0, 0, 30, true, 50, 0, 0, true, 1, 0, 0, 7, false, 0},
+    {"Footman", 60, 60, 0.05f, 2.0f, 8, 30, 30, false, 0, CADV_BF_BARRACKS, 0, true, 1, 10, 0, 0, false, 0},
+    {"Ferry", 80, 200, 0.08f, 0.0f, 0, 0, 30, false, 0, 0, 0, false, 0, 40, 20, 0, true, 3},
+};
+
+static void hearth_world(void)
+{
+    cadv_rts_init(&r, 30, 30, 2.0f, k_hb, H_COUNT, k_hu, H_UCOUNT);
+    r.use_supply = true;
+    cadv_rts_add_building(&r, 0, H_HALL, 2, 2);
+}
+
+static void test_rts_kit__tree_depletion_and_pathing_update(void)
+{
+    cadv_cell p[CADV_RTS_PATH_MAX];
+    int w;
+    int i;
+    uint32_t v;
+    hearth_world();
+    /* a wall of trees with no gap: unreachable beyond until felled */
+    cadv_rts_add_resource(&r.grid, 10, 0, 10, 29, 1, 25, true);
+    TEST_ASSERT_FALSE(cadv_rts_passable(&r.grid, 10, 5));
+    TEST_ASSERT_EQUAL_INT(-1, cadv_rts_path(&r.grid, (cadv_cell){8, 5}, (cadv_cell){14, 5}, p, CADV_RTS_PATH_MAX));
+    w = cadv_rts_add_unit(&r, 0, H_WORKER, 15.0f, 11.0f);
+    cadv_rts_order_harvest_at(&r, w, (cadv_cell){10, 5});
+    TEST_ASSERT_EQUAL_INT(1, r.u[w].res_kind);
+    v = r.grid.version;
+    for (i = 0; i < 6000 && r.side[0].lumber < 25; ++i) {
+        run(1);
+    }
+    TEST_ASSERT_EQUAL_INT(25, r.side[0].lumber); /* chopped from beside the tree */
+    TEST_ASSERT_EQUAL_INT(0, r.side[0].credits); /* lumber is not gold */
+    TEST_ASSERT_TRUE(cadv_rts_passable(&r.grid, 10, 5));
+    TEST_ASSERT_TRUE(r.grid.version > v);
+    TEST_ASSERT_TRUE(cadv_rts_path(&r.grid, (cadv_cell){8, 5}, (cadv_cell){14, 5}, p, CADV_RTS_PATH_MAX) > 0);
+    /* and it moves on to the next tree of the same kind */
+    run(600);
+    TEST_ASSERT_EQUAL_INT(1, r.u[w].res_kind);
+    TEST_ASSERT_TRUE(r.u[w].res_cell.x == 10);
+    /* resource kinds and the classic nearest-ore lookup */
+    TEST_ASSERT_EQUAL_INT(50, cadv_rts_resource(&r, 0, 1));
+    TEST_ASSERT_EQUAL_INT(0, cadv_rts_resource(&r, 0, 2));
+    {
+        cadv_cell c;
+        TEST_ASSERT_FALSE(cadv_rts_nearest_ore(&r.grid, 0, 0, &c)); /* trees are not ore */
+        TEST_ASSERT_FALSE(cadv_rts_nearest_resource(&r.grid, 0, 0, 2, &c));
+    }
+    cadv_rts_order_harvest_at(&r, w, (cadv_cell){-1, 5}); /* off the map: ignored */
+}
+
+static void test_rts_kit__supply_cap(void)
+{
+    hearth_world();
+    r.side[0].credits = 1000;
+    r.side[0].lumber = 1000;
+    r.side[0].tallow = 1000;
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER));
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER));
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER));
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER));
+    TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, false, H_WORKER)); /* the hall feeds four */
+    TEST_ASSERT_TRUE(r.events[0] & CADV_RTS_EV_SUPPLY);
+    cadv_rts_add_building(&r, 0, H_FARM, 6, 2);
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER)); /* a farm adds four */
+    run(400);
+    TEST_ASSERT_EQUAL_INT(5, r.side[0].supply_used);
+    TEST_ASSERT_EQUAL_INT(8, r.side[0].supply_cap);
+    TEST_ASSERT_EQUAL_INT(5, r.side[0].units_built);
+    /* without the supply rule there is no cap */
+    r.use_supply = false;
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, H_WORKER));
+}
+
+static void test_rts_kit__three_resource_costs(void)
+{
+    hearth_world();
+    r.side[0].credits = 500;
+    TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, true, H_FARM)); /* no lumber */
+    r.side[0].lumber = 100;
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, true, H_FARM));
+    TEST_ASSERT_EQUAL_INT(450, r.side[0].credits);
+    TEST_ASSERT_EQUAL_INT(60, r.side[0].lumber);
+    TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, true, H_BARRACKS)); /* no tallow */
+    r.side[0].tallow = 10;
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, true, H_BARRACKS));
+    TEST_ASSERT_EQUAL_INT(0, r.side[0].tallow);
+    TEST_ASSERT_TRUE(cadv_rts_cancel(&r, 0, true));
+    TEST_ASSERT_EQUAL_INT(10, r.side[0].tallow);
+    TEST_ASSERT_EQUAL_INT(60, r.side[0].lumber);
+    /* each kind of cargo lands in its own store */
+    cadv_rts_add_resource(&r.grid, 9, 3, 9, 3, 2, 50, true);
+    cadv_rts_add_resource(&r.grid, 9, 8, 9, 8, 0, 50, true);
+    {
+        int a = cadv_rts_add_unit(&r, 0, H_WORKER, 13.0f, 7.0f);
+        int b = cadv_rts_add_unit(&r, 0, H_WORKER, 13.0f, 17.0f);
+        cadv_rts_order_harvest_at(&r, a, (cadv_cell){9, 3});
+        cadv_rts_order_harvest_at(&r, b, (cadv_cell){9, 8});
+        run(3000);
+    }
+    TEST_ASSERT_EQUAL_INT(60, r.side[0].tallow);
+    TEST_ASSERT_EQUAL_INT(500, r.side[0].credits);
+}
+
+static void test_rts_kit__ferry_loading(void)
+{
+    int ferry;
+    int f[4];
+    int i;
+    int left = -1;
+    int aboard = -1;
+    cadv_cell p[CADV_RTS_PATH_MAX];
+    hearth_world();
+    r.use_supply = false;
+    cadv_rts_set_water(&r.grid, 0, 12, 29, 17, true); /* a lake across the map */
+    TEST_ASSERT_EQUAL_INT(-1, cadv_rts_path(&r.grid, (cadv_cell){5, 10}, (cadv_cell){5, 20}, p, CADV_RTS_PATH_MAX));
+    TEST_ASSERT_TRUE(cadv_rts_path_for(&r.grid, (cadv_cell){5, 12}, (cadv_cell){20, 17}, p, CADV_RTS_PATH_MAX, true) > 0);
+    ferry = cadv_rts_add_unit(&r, 0, H_FERRY, 11.0f, 25.0f); /* cell (5, 12): water */
+    for (i = 0; i < 4; ++i) {
+        f[i] = cadv_rts_add_unit(&r, 0, H_FOOT, 5.0f + (float)i * 2.0f, 17.0f);
+        cadv_rts_order_board(&r, f[i], ferry);
+    }
+    run(600);
+    TEST_ASSERT_EQUAL_INT(3, r.u[ferry].passengers); /* capacity three */
+    for (i = 0; i < 4; ++i) {
+        if (r.u[f[i]].carrier == ferry) {
+            aboard = f[i];
+        } else {
+            left = f[i];
+        }
+    }
+    TEST_ASSERT_TRUE(aboard >= 0 && left >= 0);
+    TEST_ASSERT_EQUAL_INT(-1, r.u[left].carrier);
+    /* carried units cannot be targeted */
+    i = cadv_rts_add_unit(&r, 1, H_FOOT, r.u[ferry].x + 1.0f, r.u[ferry].z);
+    run(60);
+    TEST_ASSERT_EQUAL_INT(60, r.u[aboard].hp);
+    cadv_rts_damage(&r, i, 1000);
+    /* sail to the far shore: passengers step off there */
+    cadv_rts_order_move(&r, ferry, (cadv_cell){8, 19}, false);
+    run(1500);
+    TEST_ASSERT_EQUAL_INT(0, r.u[ferry].passengers);
+    TEST_ASSERT_TRUE(r.events[0] & CADV_RTS_EV_UNLOADED || r.u[aboard].z > 36.0f);
+    TEST_ASSERT_EQUAL_INT(-1, r.u[aboard].carrier);
+    TEST_ASSERT_TRUE(cadv_rts_passable(&r.grid, cadv_rts_cell_at(&r.grid, r.u[aboard].x, r.u[aboard].z).x,
+                                       cadv_rts_cell_at(&r.grid, r.u[aboard].x, r.u[aboard].z).z));
+    TEST_ASSERT_TRUE(r.u[aboard].z > 34.0f);
+    /* back for the one left behind; a sunk ferry takes its passengers with it */
+    cadv_rts_order_move(&r, ferry, (cadv_cell){5, 9}, false);
+    run(1500);
+    cadv_rts_order_board(&r, left, ferry);
+    run(600);
+    TEST_ASSERT_TRUE(r.u[left].carrier == ferry);
+    cadv_rts_damage(&r, ferry, 10000);
+    run(1);
+    TEST_ASSERT_FALSE(r.u[left].alive);
+    /* boarding something that is not a transport does nothing */
+    cadv_rts_order_board(&r, f[1], f[2]);
+    run(1);
+    TEST_ASSERT_EQUAL_INT(CADV_ORDER_IDLE, r.u[f[1]].order);
+    TEST_ASSERT_EQUAL_INT(0, cadv_rts_unload(&r, f[2]));
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -558,5 +730,9 @@ int main(void)
     RUN_TEST(test_rts_kit__neutral_buildings_and_capture);
     RUN_TEST(test_rts_kit__barracks_and_factory_queues_run_together);
     RUN_TEST(test_rts_kit__ai_opponent);
+    RUN_TEST(test_rts_kit__tree_depletion_and_pathing_update);
+    RUN_TEST(test_rts_kit__supply_cap);
+    RUN_TEST(test_rts_kit__three_resource_costs);
+    RUN_TEST(test_rts_kit__ferry_loading);
     return UNITY_END();
 }
