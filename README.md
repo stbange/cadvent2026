@@ -78,8 +78,12 @@ Kindlewick (Day 5) the stave works like Day 3's tablet (Q/wheel, E, fire to
 place, pick and order; 6 selects workers); fire on a tree, the mine or the
 tallow platform sends selected workers there, fire on your ferry boards the
 squad, Space boards or leaves the ferry, and with no squad fire is a shield
-bash. Gamepads and touch screens work too (touch controls appear
-automatically).
+bash. In the walker cockpit (Day 6): W/S set the throttle, A/D turn the legs,
+the mouse twists the torso and aims, the left button fires the selected
+weapon group (1-3, 4 toggles chain fire), the right button fires everything,
+Space fires the jump jets, C is all stop, Shift centres the torso and E asks
+Santa Claude for a coolant drop; watch the heat gauge. Gamepads and touch
+screens work too (touch controls appear automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,
 `--unlock-all` opens every portal (development; does not touch your real

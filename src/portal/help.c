@@ -90,6 +90,20 @@ static const cadv_help k_day5 = {
     4,
 };
 
+static const cadv_help k_day6 = {
+    "DAY 6 - IRON YULE",
+    "PILOT SABLE'S WALKER THROUGH THREE MISSIONS: ESCORT SANTA CLAUDE'S CRAWLER THROUGH THE CANYON (HIS GIFT "
+    "IS THE SHINING STAR), DESTROY THE ICE DAM PUMPS, THEN DUEL THE ACE KRAMPUS IN THE FROZEN CRATER.",
+    {{"W / S", "L-STICK", "THROTTLE UP / DOWN"}, {"A / D", "L-STICK", "TURN THE LEGS"}, {"MOUSE", "R-STICK", "TWIST TORSO / AIM"},
+     {"L-MOUSE", "RT", "FIRE WEAPON GROUP"}, {"R-MOUSE", "LT", "ALPHA STRIKE (ALL)"}, {"1 - 3 / Q", "LB / RB", "WEAPON GROUP"},
+     {"4", "-", "CHAIN FIRE ON/OFF"}, {"SPACE", "A", "JUMP JETS"}, {"C", "B", "ALL STOP"}, {"SHIFT", "L3", "CENTRE TORSO"},
+     {"E", "X", "CALL COOLANT DROP"}, {"TAB", "D-UP", "BIG RADAR"}, HELP},
+    13,
+    {"WEAPONS AND JETS HEAT YOU; AT THE TOP OF THE GAUGE YOU SHUT DOWN.", "WATER AND THE CRATER'S STEAM VENTS COOL YOU.",
+     "HOLD A TARGET IN THE CROSSHAIR TO LOCK MISSILES.", "A LOST ARM TAKES ITS WEAPON; HURT LEGS SLOW YOU."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -119,6 +133,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day4;
     case 5:
         return &k_day5;
+    case 6:
+        return &k_day6;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }
