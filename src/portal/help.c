@@ -64,6 +64,18 @@ static const cadv_help k_day3 = {
     4,
 };
 
+static const cadv_help k_day4 = {
+    "DAY 4 - ICE TOMB",
+    "FIND THE WINTER KING'S THREE SUN GEARS IN THE GLACIER TOMB AND SET THEM INTO THE SOLAR DOOR. "
+    "THE SHINING STAR FORMS IN ITS LIGHT.",
+    {MOVE, LOOK, {"SHIFT", "L3", "RUN (RUNNING JUMP)"}, {"SPACE", "A", "JUMP / SWIM UP"}, {"E (HOLD)", "X", "GRAB LEDGE / PUSH"},
+     {"E", "X", "LEVER / SAVE CRYSTAL"}, {"C", "B", "LET GO / DIVE"}, {"L-MOUSE", "RT", "PISTOLS (AUTO-AIM)"}, HELP, LEAVE},
+    10,
+    {"STANDING JUMP: ONE TILE. RUNNING JUMP: TWO.", "HOLD E IN THE AIR TO CATCH A LEDGE, THEN JUMP TO PULL UP.",
+     "E + FORWARD PUSHES A BLOCK, E + BACK PULLS IT.", "FEWER SAVES AND ALL THREE JADE EARN SNOWFLAKES."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -89,6 +101,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day2;
     case 3:
         return &k_day3;
+    case 4:
+        return &k_day4;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }

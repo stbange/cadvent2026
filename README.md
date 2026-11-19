@@ -71,7 +71,9 @@ firing; fire picks a unit (Shift adds), right button sweep-selects, then fire
 on ground or an enemy orders the squad (Shift = plain move); C clears the
 squad, Shift+1–4 sets and 1–4 recalls groups, 5 selects the army, 6 the
 engineers, Space launches the recon drone, Tab opens the map. With no squad
-selected, fire uses the sidearm. Gamepads and touch screens work too (touch controls appear
+selected, fire uses the sidearm. In the ice tomb (Day 4): Shift runs (a
+running jump clears two tiles), hold E in the air to catch ledges, E with
+forward/back pushes or pulls blocks, C lets go or dives. Gamepads and touch screens work too (touch controls appear
 automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,

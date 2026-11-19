@@ -44,6 +44,8 @@ add_library(cadv_core STATIC
   src/kits/fps/combat.c
   src/kits/fps/map.c
   src/kits/fps/player.c
+  src/kits/platformer/climber.c
+  src/kits/platformer/tiles.c
   src/kits/rts/grid.c
   src/kits/rts/rts.c
   src/kits/rts/rts_ai.c
@@ -54,6 +56,7 @@ add_library(cadv_core STATIC
   src/portals/p01_sleighed.c
   src/portals/p02_aurora_carpet.c
   src/portals/p03_frostfront.c
+  src/portals/p04_ice_tomb.c
   src/portals/test_range.c
   src/portal/script.c
   src/portal/session.c
@@ -82,7 +85,7 @@ if(NOT EMSCRIPTEN)
   target_include_directories(glad SYSTEM PUBLIC third_party/glad/include)
 endif()
 
-add_library(cadv_gfx STATIC src/gfx/gl_util.c src/gfx/renderer.c src/portals/test_range_gfx.c src/portals/p01_sleighed_gfx.c src/portals/p02_aurora_carpet_gfx.c src/portals/p03_frostfront_gfx.c src/portals/views.c src/hub/hub_gfx.c src/app/app.c)
+add_library(cadv_gfx STATIC src/gfx/gl_util.c src/gfx/renderer.c src/portals/test_range_gfx.c src/portals/p01_sleighed_gfx.c src/portals/p02_aurora_carpet_gfx.c src/portals/p03_frostfront_gfx.c src/portals/p04_ice_tomb_gfx.c src/portals/views.c src/hub/hub_gfx.c src/app/app.c)
 target_link_libraries(cadv_gfx PUBLIC cadv_core)
 if(NOT EMSCRIPTEN)
   target_link_libraries(cadv_gfx PUBLIC glad)

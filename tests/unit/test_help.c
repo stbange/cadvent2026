@@ -18,6 +18,7 @@ static void test_on_screen_help__every_world_has_a_help_page(void)
     TEST_ASSERT_EQUAL_STRING("DAY 1 - SLEIGHED!", cadv_help_get(1, true)->title);
     TEST_ASSERT_EQUAL_STRING("DAY 2 - AURORA CARPET", cadv_help_get(2, true)->title);
     TEST_ASSERT_EQUAL_STRING("DAY 3 - FROSTFRONT", cadv_help_get(3, true)->title);
+    TEST_ASSERT_EQUAL_STRING("DAY 4 - ICE TOMB", cadv_help_get(4, true)->title);
     TEST_ASSERT_EQUAL_STRING("PRACTICE RANGE", cadv_help_get(9, false)->title);
     for (day = 0; day <= CADV_PORTAL_COUNT; ++day) {
         const cadv_portal_desc *d = day > 0 ? cadv_portal_get(day) : NULL;
@@ -70,7 +71,7 @@ static void test_help_word_wrap(void)
 static void test_help_draws_one_page_on_a_normal_screen(void)
 {
     int day;
-    for (day = 0; day <= 3; ++day) {
+    for (day = 0; day <= 4; ++day) {
         cadv_ui_reset(&ui, 400, 225);
         TEST_ASSERT_EQUAL_INT(1, cadv_help_draw(&ui, cadv_help_get(day, true), CADV_DEVICE_KBM, 1.0f, 0, 0));
         TEST_ASSERT_TRUE(ui.count > 100);
