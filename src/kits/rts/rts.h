@@ -13,14 +13,16 @@
  * fingerprints it for lockstep checks. Portals supply the unit and building
  * tables. */
 
-#define CADV_RTS_SIDES 2
+#define CADV_RTS_SIDES 3   /* two players and a neutral side (index 2) */
+#define CADV_RTS_NEUTRAL 2
+#define CADV_RTS_SHOTS 32
 #define CADV_RTS_MAX_BUILDINGS 64
 #define CADV_RTS_MAX_UNITS 96
 #define CADV_RTS_UNIT_PATH 64
 #define CADV_RTS_GROUPS 4
 #define CADV_RTS_QUEUE 5
 
-enum { CADV_BF_REFINERY = 1 << 0, CADV_BF_FACTORY = 1 << 1, CADV_BF_DEFENCE = 1 << 2, CADV_BF_HQ = 1 << 3 };
+enum { CADV_BF_REFINERY = 1 << 0, CADV_BF_FACTORY = 1 << 1, CADV_BF_DEFENCE = 1 << 2, CADV_BF_HQ = 1 << 3, CADV_BF_BARRACKS = 1 << 4 };
 
 typedef struct cadv_rts_bdef {
     const char *name;
@@ -33,6 +35,7 @@ typedef struct cadv_rts_bdef {
     float range;        /* defences: firing range in metres */
     int damage;
     int cooldown;       /* ticks between shots */
+    int sight;          /* fog of war: cells revealed (0 = 5) */
 } cadv_rts_bdef;
 
 typedef struct cadv_rts_udef {
@@ -46,6 +49,9 @@ typedef struct cadv_rts_udef {
     int build_ticks;
     bool harvester;
     int carry;          /* harvesters: ore per trip */
+    uint32_t from;      /* building flag that trains it (0 = factory) */
+    int sight;          /* fog of war: cells revealed (0 = 5) */
+    bool infantry;
 } cadv_rts_udef;
 
 typedef enum cadv_order { CADV_ORDER_IDLE = 0, CADV_ORDER_MOVE, CADV_ORDER_ATTACK, CADV_ORDER_ATTACK_MOVE, CADV_ORDER_HARVEST } cadv_order;
@@ -88,11 +94,12 @@ typedef struct cadv_rts_queue_item {
     int progress;       /* ticks of work done */
 } cadv_rts_queue_item;
 
+/* queue[0] builds structures, queue[1] trains units; both run at once. */
 typedef struct cadv_rts_side {
     int credits;
     int power_made, power_used;
-    cadv_rts_queue_item queue[CADV_RTS_QUEUE];
-    int queued;
+    cadv_rts_queue_item queue[2][CADV_RTS_QUEUE];
+    int queued[2];
     int ready_building; /* finished structure waiting for placement, -1 none */
     int rally_x, rally_z;
     uint8_t group[CADV_RTS_GROUPS][CADV_RTS_MAX_UNITS]; /* membership flags */
@@ -107,8 +114,15 @@ typedef enum cadv_rts_event {
     CADV_RTS_EV_BUILDING_LOST = 1 << 3,
     CADV_RTS_EV_LOW_POWER = 1 << 4,
     CADV_RTS_EV_UNLOAD = 1 << 5,
-    CADV_RTS_EV_SHOT = 1 << 6
+    CADV_RTS_EV_SHOT = 1 << 6,
+    CADV_RTS_EV_BROKE = 1 << 7       /* a queue could not be paid */
 } cadv_rts_event;
+
+typedef struct cadv_rts_shot {
+    float x0, z0, x1, z1;  /* shooter and target positions, metres */
+    int owner;
+    int ttl;               /* ticks left (visual only) */
+} cadv_rts_shot;
 
 typedef struct cadv_rts {
     cadv_rts_grid grid;
@@ -122,6 +136,10 @@ typedef struct cadv_rts {
     int ticks;
     uint32_t events[CADV_RTS_SIDES]; /* this tick */
     int last_lost_unit;
+    cadv_rts_shot shots[CADV_RTS_SHOTS];
+    int shot_next;
+    uint8_t visible[CADV_RTS_SIDES][CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];
+    uint8_t explored[CADV_RTS_SIDES][CADV_RTS_GRID_MAX * CADV_RTS_GRID_MAX];
 } cadv_rts;
 
 bool cadv_rts_init(cadv_rts *r, int w, int h, float cell, const cadv_rts_bdef *bdefs, int nbdefs,
@@ -139,8 +157,21 @@ void cadv_rts_update_power(cadv_rts *r, int side);
 /* Build queue: pays up front, refuses when broke, full or (units) without a
  * factory. Returns false on refusal. */
 bool cadv_rts_queue(cadv_rts *r, int side, bool building, int def);
-/* Cancels the last queued item and refunds its cost. */
-bool cadv_rts_cancel(cadv_rts *r, int side);
+/* Cancels the last item of the structure or unit queue and refunds it. */
+bool cadv_rts_cancel(cadv_rts *r, int side, bool building);
+/* True when the side owns a building that can train this unit. */
+bool cadv_rts_can_train(const cadv_rts *r, int side, int udef);
+/* Hands a building to another side (engineer capture). */
+void cadv_rts_capture(cadv_rts *r, int building, int side);
+/* Fog of war: recomputes 'visible' from the side's units and buildings
+ * (cadv_rts_tick does this every tick) and lets callers add viewers. */
+void cadv_rts_update_fog(cadv_rts *r, int side);
+void cadv_rts_reveal(cadv_rts *r, int side, float x, float z, int radius);
+bool cadv_rts_cell_visible(const cadv_rts *r, int side, float x, float z);
+/* Deals damage to a unit or (CADV_RTS_TARGET_BUILDING + i) a building. */
+void cadv_rts_damage(cadv_rts *r, int target, int amount);
+/* First building index covering a cell, -1 if none. */
+int cadv_rts_building_at(const cadv_rts *r, int x, int z);
 /* Places the finished structure; false if the spot is invalid. */
 cadv_place_result cadv_rts_place_ready(cadv_rts *r, int side, int x, int z);
 

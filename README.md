@@ -61,7 +61,13 @@ ctest --preset linux-gcc
 Controls: WASD/arrows + mouse (click to capture the mouse), Space jump,
 C crouch, Shift run, E use, mouse buttons fire (right button: alt-fire or
 claim), 1–6 weapons or spells, Esc leave a portal. On the carpet (Day 2),
-Space climbs and C sinks. Gamepads and touch screens work too (touch controls appear
+Space climbs and C sinks. As commander (Day 3): Q or the mouse wheel picks a
+tablet item and E buys it; a finished structure is placed by aiming and
+firing; fire picks a unit (Shift adds), right button sweep-selects, then fire
+on ground or an enemy orders the squad (Shift = plain move); C clears the
+squad, Shift+1–4 sets and 1–4 recalls groups, 5 selects the army, 6 the
+engineers, Space launches the recon drone, Tab opens the map. With no squad
+selected, fire uses the sidearm. Gamepads and touch screens work too (touch controls appear
 automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,

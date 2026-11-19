@@ -50,3 +50,31 @@ The kit SHALL fingerprint its state (sides, queues, buildings, units) so that tw
 #### Scenario: Lockstep hash equality
 - **WHEN** two worlds run the same script
 - **THEN** their hashes match, and a single credit or a millimetre of unit movement makes them differ
+
+### Requirement: Fog of war
+Each side SHALL see only the cells within sight of its units and buildings (plus viewers a portal adds), and SHALL remember every cell it has ever seen as explored.
+
+#### Scenario: Fog of war
+- **WHEN** a unit walks away from a spot it stood on
+- **THEN** the spot is no longer visible but stays explored, and the other side never saw it
+
+### Requirement: Neutral buildings and capture
+Buildings of the neutral side SHALL be ignored by automatic targeting, and capturing a building SHALL hand it, its cells and its power to the capturing side.
+
+#### Scenario: Neutral buildings and capture
+- **WHEN** a tank idles next to a neutral power plant that is then captured
+- **THEN** the plant is not attacked, and after the capture it belongs to and powers the capturing side
+
+### Requirement: Separate production queues
+Structures and units SHALL build in two queues that advance at the same time, each unit type training only where a building with its training flag stands (a war factory unless stated otherwise), and a refused purchase for lack of money SHALL raise an event.
+
+#### Scenario: Barracks and factory queues run together
+- **WHEN** a side with a barracks queues a trooper and a factory at once
+- **THEN** both finish together, a tank is refused without a factory and a purchase without money raises the broke event
+
+### Requirement: AI opponent
+The AI opponent SHALL keep its planned base standing (rebuilding lost structures), keep a harvester, train its unit mix up to an army cap, attack intruders near its home with idle units and send attack waves that grow up to a maximum.
+
+#### Scenario: AI opponent
+- **WHEN** the AI plays with a plan, a unit mix and a wave timer, loses its factory and sees an intruder at home
+- **THEN** it builds the plan, sends waves, rebuilds the factory and destroys the intruder

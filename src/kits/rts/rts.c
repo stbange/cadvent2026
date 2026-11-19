@@ -138,31 +138,110 @@ static bool has_flag(const cadv_rts *r, int side, uint32_t flag, int *which)
     return false;
 }
 
+static uint32_t trained_at(const cadv_rts *r, int udef)
+{
+    return r->udefs[udef].from ? r->udefs[udef].from : CADV_BF_FACTORY;
+}
+
+bool cadv_rts_can_train(const cadv_rts *r, int side, int udef) { return has_flag(r, side, trained_at(r, udef), NULL); }
+
 bool cadv_rts_queue(cadv_rts *r, int side, bool building, int def)
 {
     cadv_rts_side *sd = &r->side[side];
+    int k = building ? 0 : 1;
     int cost = building ? r->bdefs[def].cost : r->udefs[def].cost;
-    if (sd->queued >= CADV_RTS_QUEUE || sd->credits < cost || (!building && !has_flag(r, side, CADV_BF_FACTORY, NULL))) {
+    if (sd->queued[k] >= CADV_RTS_QUEUE || (!building && !cadv_rts_can_train(r, side, def))) {
+        return false;
+    }
+    if (sd->credits < cost) {
+        r->events[side] |= CADV_RTS_EV_BROKE;
         return false;
     }
     sd->credits -= cost;
-    sd->queue[sd->queued].building = building;
-    sd->queue[sd->queued].def = def;
-    sd->queue[sd->queued].progress = 0;
-    ++sd->queued;
+    sd->queue[k][sd->queued[k]].building = building;
+    sd->queue[k][sd->queued[k]].def = def;
+    sd->queue[k][sd->queued[k]].progress = 0;
+    ++sd->queued[k];
     return true;
 }
 
-bool cadv_rts_cancel(cadv_rts *r, int side)
+bool cadv_rts_cancel(cadv_rts *r, int side, bool building)
 {
     cadv_rts_side *sd = &r->side[side];
+    int k = building ? 0 : 1;
     const cadv_rts_queue_item *q;
-    if (sd->queued == 0) {
+    if (sd->queued[k] == 0) {
         return false;
     }
-    q = &sd->queue[--sd->queued];
+    q = &sd->queue[k][--sd->queued[k]];
     sd->credits += q->building ? r->bdefs[q->def].cost : r->udefs[q->def].cost;
     return true;
+}
+
+void cadv_rts_capture(cadv_rts *r, int building, int side)
+{
+    cadv_rts_building *b = &r->b[building];
+    int old = b->owner;
+    int i;
+    if (!b->alive || old == side) {
+        return;
+    }
+    b->owner = side;
+    for (i = 0; i < r->grid.w * r->grid.h; ++i) {
+        if (r->grid.building[i] == building) {
+            r->grid.owner[i] = (int8_t)side;
+        }
+    }
+    cadv_rts_update_power(r, old);
+    cadv_rts_update_power(r, side);
+}
+
+int cadv_rts_building_at(const cadv_rts *r, int x, int z)
+{
+    return cadv_rts_in_bounds(&r->grid, x, z) ? r->grid.building[cadv_rts_index(&r->grid, x, z)] : -1;
+}
+
+void cadv_rts_reveal(cadv_rts *r, int side, float x, float z, int radius)
+{
+    cadv_cell c = cadv_rts_cell_at(&r->grid, x, z);
+    int dx;
+    int dz;
+    for (dz = -radius; dz <= radius; ++dz) {
+        for (dx = -radius; dx <= radius; ++dx) {
+            if (dx * dx + dz * dz <= radius * radius && cadv_rts_in_bounds(&r->grid, c.x + dx, c.z + dz)) {
+                int i = cadv_rts_index(&r->grid, c.x + dx, c.z + dz);
+                r->visible[side][i] = 1;
+                r->explored[side][i] = 1;
+            }
+        }
+    }
+}
+
+void cadv_rts_update_fog(cadv_rts *r, int side)
+{
+    int i;
+    memset(r->visible[side], 0, sizeof r->visible[side]);
+    for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
+        const cadv_rts_unit *u = &r->u[i];
+        if (u->alive && u->owner == side) {
+            int s = r->udefs[u->def].sight;
+            cadv_rts_reveal(r, side, u->x, u->z, s > 0 ? s : 5);
+        }
+    }
+    for (i = 0; i < CADV_RTS_MAX_BUILDINGS; ++i) {
+        const cadv_rts_building *b = &r->b[i];
+        if (b->alive && b->owner == side) {
+            const cadv_rts_bdef *d = &r->bdefs[b->def];
+            cadv_rts_reveal(r, side, ((float)b->x + 0.5f * (float)d->fw) * r->grid.size,
+                            ((float)b->z + 0.5f * (float)d->fh) * r->grid.size, d->sight > 0 ? d->sight : 5);
+        }
+    }
+}
+
+bool cadv_rts_cell_visible(const cadv_rts *r, int side, float x, float z)
+{
+    cadv_cell c = cadv_rts_cell_at(&r->grid, x, z);
+    return cadv_rts_in_bounds(&r->grid, c.x, c.z) && r->visible[side][cadv_rts_index(&r->grid, c.x, c.z)];
 }
 
 cadv_place_result cadv_rts_place_ready(cadv_rts *r, int side, int x, int z)
@@ -259,7 +338,7 @@ static void spawn_from_factory(cadv_rts *r, int side, int def)
     const cadv_rts_bdef *d;
     int x;
     int z;
-    has_flag(r, side, CADV_BF_FACTORY, &f);
+    has_flag(r, side, trained_at(r, def), &f);
     d = &r->bdefs[r->b[f].def];
     /* first passable cell on the ring around the footprint, south side first */
     for (z = r->b[f].z + d->fh; z >= r->b[f].z - 1; --z) {
@@ -284,16 +363,16 @@ static void spawn_from_factory(cadv_rts *r, int side, int def)
     }
 }
 
-static void tick_queue(cadv_rts *r, int side)
+static void tick_queue(cadv_rts *r, int side, int k)
 {
     cadv_rts_side *sd = &r->side[side];
     cadv_rts_queue_item *q;
     int need;
     int i;
-    if (sd->queued == 0) {
+    if (sd->queued[k] == 0) {
         return;
     }
-    q = &sd->queue[0];
+    q = &sd->queue[k][0];
     need = (q->building ? r->bdefs[q->def].build_ticks : r->udefs[q->def].build_ticks) * 100;
     if (q->progress < need) {
         q->progress += (int)(100.0f * cadv_rts_power_factor(r, side));
@@ -308,15 +387,15 @@ static void tick_queue(cadv_rts *r, int side)
         sd->ready_building = q->def;
         r->events[side] |= CADV_RTS_EV_BUILT;
     } else {
-        if (!has_flag(r, side, CADV_BF_FACTORY, NULL)) {
+        if (!cadv_rts_can_train(r, side, q->def)) {
             return;
         }
         spawn_from_factory(r, side, q->def);
     }
-    for (i = 1; i < sd->queued; ++i) {
-        sd->queue[i - 1] = sd->queue[i];
+    for (i = 1; i < sd->queued[k]; ++i) {
+        sd->queue[k][i - 1] = sd->queue[k][i];
     }
-    --sd->queued;
+    --sd->queued[k];
 }
 
 static bool follow_path(cadv_rts *r, cadv_rts_unit *u)
@@ -391,7 +470,7 @@ static int nearest_enemy(const cadv_rts *r, int owner, float x, float z, float r
     float bd = range;
     for (i = 0; i < CADV_RTS_MAX_UNITS; ++i) {
         const cadv_rts_unit *e = &r->u[i];
-        if (e->alive && e->owner != owner) {
+        if (e->alive && e->owner != owner && e->owner != CADV_RTS_NEUTRAL) {
             float d = cadv_sqrtf((e->x - x) * (e->x - x) + (e->z - z) * (e->z - z));
             if (d <= bd) {
                 bd = d;
@@ -406,7 +485,7 @@ static int nearest_enemy(const cadv_rts *r, int owner, float x, float z, float r
         float tx;
         float tz;
         float pad;
-        if (target_pos(r, CADV_RTS_TARGET_BUILDING + i, owner, &tx, &tz, &pad)) {
+        if (r->b[i].owner != CADV_RTS_NEUTRAL && target_pos(r, CADV_RTS_TARGET_BUILDING + i, owner, &tx, &tz, &pad)) {
             float d = cadv_sqrtf((tx - x) * (tx - x) + (tz - z) * (tz - z)) - pad;
             if (d <= bd) {
                 bd = d;
@@ -417,7 +496,22 @@ static int nearest_enemy(const cadv_rts *r, int owner, float x, float z, float r
     return best;
 }
 
-static void damage(cadv_rts *r, int target, int amount)
+static void log_shot(cadv_rts *r, int owner, float x0, float z0, int target)
+{
+    cadv_rts_shot *s = &r->shots[r->shot_next];
+    float pad;
+    r->shot_next = (r->shot_next + 1) % CADV_RTS_SHOTS;
+    s->owner = owner;
+    s->x0 = x0;
+    s->z0 = z0;
+    s->ttl = 8;
+    if (!target_pos(r, target, owner, &s->x1, &s->z1, &pad)) {
+        s->x1 = x0;
+        s->z1 = z0;
+    }
+}
+
+void cadv_rts_damage(cadv_rts *r, int target, int amount)
 {
     if (target >= CADV_RTS_TARGET_BUILDING) {
         cadv_rts_building *b = &r->b[target - CADV_RTS_TARGET_BUILDING];
@@ -458,7 +552,8 @@ static bool engage(cadv_rts *r, cadv_rts_unit *u, int target)
     }
     u->yaw = cadv_atan2f(-(tx - u->x), -(tz - u->z));
     if (u->cooldown <= 0) {
-        damage(r, target, d->damage);
+        log_shot(r, u->owner, u->x, u->z, target);
+        cadv_rts_damage(r, target, d->damage);
         u->cooldown = d->cooldown;
         r->events[u->owner] |= CADV_RTS_EV_SHOT;
     }
@@ -530,7 +625,8 @@ static void tick_harvester(cadv_rts *r, int idx)
         break;
     default: /* unloading */
         if (--u->timer <= 0) {
-            int part = u->cargo < 25 ? u->cargo : 25;
+            int chunk = d->carry / 10 > 25 ? d->carry / 10 : 25;
+            int part = u->cargo < chunk ? u->cargo : chunk;
             u->cargo -= part;
             r->side[u->owner].credits += part;
             r->side[u->owner].harvested += part;
@@ -615,7 +711,8 @@ static void tick_defence(cadv_rts *r, int i)
     }
     e = nearest_enemy(r, b->owner, x, z, d->range);
     if (e >= 0 && e < CADV_RTS_TARGET_BUILDING) {
-        damage(r, e, d->damage);
+        log_shot(r, b->owner, x, z, e);
+        cadv_rts_damage(r, e, d->damage);
         b->cooldown = d->cooldown;
         r->events[b->owner] |= CADV_RTS_EV_SHOT;
     }
@@ -628,7 +725,8 @@ void cadv_rts_tick(cadv_rts *r)
     ++r->ticks;
     for (s = 0; s < CADV_RTS_SIDES; ++s) {
         r->events[s] = 0;
-        tick_queue(r, s);
+        tick_queue(r, s, 0);
+        tick_queue(r, s, 1);
         if (cadv_rts_power_factor(r, s) < 1.0f && r->ticks % 300 == 1) {
             r->events[s] |= CADV_RTS_EV_LOW_POWER;
         }
@@ -642,6 +740,14 @@ void cadv_rts_tick(cadv_rts *r)
         if (r->b[i].alive && (r->bdefs[r->b[i].def].flags & CADV_BF_DEFENCE)) {
             tick_defence(r, i);
         }
+    }
+    for (i = 0; i < CADV_RTS_SHOTS; ++i) {
+        if (r->shots[i].ttl > 0) {
+            --r->shots[i].ttl;
+        }
+    }
+    for (s = 0; s < CADV_RTS_SIDES - 1; ++s) {
+        cadv_rts_update_fog(r, s);
     }
 }
 
@@ -680,12 +786,15 @@ uint64_t cadv_rts_hash(const cadv_rts *r)
     for (i = 0; i < CADV_RTS_SIDES; ++i) {
         const cadv_rts_side *s = &r->side[i];
         int q;
+        int k;
         h = cadv_hash_u32(h, (uint32_t)s->credits);
-        h = cadv_hash_u32(h, (uint32_t)s->queued);
         h = cadv_hash_u32(h, (uint32_t)s->ready_building);
-        for (q = 0; q < s->queued; ++q) {
-            h = cadv_hash_u32(h, (uint32_t)s->queue[q].def);
-            h = cadv_hash_u32(h, (uint32_t)s->queue[q].progress);
+        for (k = 0; k < 2; ++k) {
+            h = cadv_hash_u32(h, (uint32_t)s->queued[k]);
+            for (q = 0; q < s->queued[k]; ++q) {
+                h = cadv_hash_u32(h, (uint32_t)s->queue[k][q].def);
+                h = cadv_hash_u32(h, (uint32_t)s->queue[k][q].progress);
+            }
         }
     }
     for (i = 0; i < CADV_RTS_MAX_BUILDINGS; ++i) {

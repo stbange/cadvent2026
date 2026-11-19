@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "kits/rts/rts.h"
+#include "kits/rts/rts_ai.h"
 #include "unity.h"
 
 enum { B_YARD, B_POWER, B_REFINERY, B_FACTORY, B_TOWER, B_COUNT };
@@ -10,18 +11,18 @@ enum { U_RIFLE, U_HARVESTER, U_TANK, U_ENGINEER, U_COUNT };
 
 static const cadv_rts_bdef k_b[B_COUNT] = {
     /* name        fw fh cost power hp  ticks flags                      range dmg cool */
-    {"Yard", 3, 3, 0, 0, 900, 1, CADV_BF_HQ, 0, 0, 0},
-    {"Power", 2, 2, 300, 100, 400, 100, 0, 0, 0, 0},
-    {"Refinery", 3, 2, 600, -40, 600, 200, CADV_BF_REFINERY, 0, 0, 0},
-    {"Factory", 3, 3, 800, -60, 700, 200, CADV_BF_FACTORY, 0, 0, 0},
-    {"Tower", 1, 1, 400, -30, 300, 100, CADV_BF_DEFENCE, 12.0f, 10, 30},
+    {"Yard", 3, 3, 0, 0, 900, 1, CADV_BF_HQ, 0, 0, 0, 0},
+    {"Power", 2, 2, 300, 100, 400, 100, 0, 0, 0, 0, 0},
+    {"Refinery", 3, 2, 600, -40, 600, 200, CADV_BF_REFINERY, 0, 0, 0, 0},
+    {"Factory", 3, 3, 800, -60, 700, 200, CADV_BF_FACTORY, 0, 0, 0, 0},
+    {"Tower", 1, 1, 400, -30, 300, 100, CADV_BF_DEFENCE, 12.0f, 10, 30, 0},
 };
 static const cadv_rts_udef k_u[U_COUNT] = {
     /* name       cost hp  speed range dmg cool ticks harv  carry */
-    {"Rifle", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0},
-    {"Harvester", 700, 400, 0.06f, 0.0f, 0, 0, 120, true, 100},
-    {"Tank", 600, 300, 0.08f, 14.0f, 40, 60, 120, false, 0},
-    {"Engineer", 300, 40, 0.05f, 0.0f, 0, 0, 60, false, 0},
+    {"Rifle", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, 0, 0, false},
+    {"Harvester", 700, 400, 0.06f, 0.0f, 0, 0, 120, true, 100, 0, 0, false},
+    {"Tank", 600, 300, 0.08f, 14.0f, 40, 60, 120, false, 0, 0, 0, false},
+    {"Engineer", 300, 40, 0.05f, 0.0f, 0, 0, 60, false, 0, 0, 0, false},
 };
 
 static cadv_rts r;
@@ -184,20 +185,20 @@ static void test_rts_kit__build_queue_pays_up_front(void)
     }
     TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, true, B_POWER)); /* full */
     TEST_ASSERT_EQUAL_INT(5000 - 5 * 300, r.side[0].credits);
-    TEST_ASSERT_TRUE(cadv_rts_cancel(&r, 0));
+    TEST_ASSERT_TRUE(cadv_rts_cancel(&r, 0, true));
     TEST_ASSERT_EQUAL_INT(5000 - 4 * 300, r.side[0].credits);
     run(100);
     TEST_ASSERT_TRUE(r.events[0] & CADV_RTS_EV_BUILT);
     run(200); /* the next one waits for the first to be placed */
-    TEST_ASSERT_EQUAL_INT(3, r.side[0].queued);
+    TEST_ASSERT_EQUAL_INT(3, r.side[0].queued[0]);
     TEST_ASSERT_EQUAL_INT(CADV_PLACE_TOO_FAR, cadv_rts_place_ready(&r, 0, 30, 30));
     TEST_ASSERT_EQUAL_INT(CADV_PLACE_OK, cadv_rts_place_ready(&r, 0, 5, 2));
     TEST_ASSERT_EQUAL_INT(CADV_PLACE_BLOCKED, cadv_rts_place_ready(&r, 0, 7, 2)); /* nothing ready */
     run(1);
-    TEST_ASSERT_EQUAL_INT(2, r.side[0].queued);
-    while (cadv_rts_cancel(&r, 0)) {
+    TEST_ASSERT_EQUAL_INT(2, r.side[0].queued[0]);
+    while (cadv_rts_cancel(&r, 0, true)) {
     }
-    TEST_ASSERT_FALSE(cadv_rts_cancel(&r, 0));
+    TEST_ASSERT_FALSE(cadv_rts_cancel(&r, 0, true));
 }
 
 static void test_units_spawn_at_the_factory_and_rally(void)
@@ -221,7 +222,7 @@ static void test_units_spawn_at_the_factory_and_rally(void)
     TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, U_RIFLE));
     cadv_rts_destroy_building(&r, 0);
     run(100);
-    TEST_ASSERT_EQUAL_INT(1, r.side[0].queued);
+    TEST_ASSERT_EQUAL_INT(1, r.side[0].queued[1]);
     TEST_ASSERT_EQUAL_INT(1, cadv_rts_count_buildings(&r, 0, -1)); /* only the power plant */
 }
 
@@ -414,6 +415,131 @@ static void test_rts_kit__lockstep_hash_equality(void)
     TEST_ASSERT_TRUE(cadv_rts_hash(&a) != cadv_rts_hash(&b));
 }
 
+static void test_rts_kit__fog_of_war(void)
+{
+    int u = cadv_rts_add_unit(&r, 0, U_RIFLE, 11.0f, 11.0f);
+    TEST_ASSERT_FALSE(cadv_rts_cell_visible(&r, 0, 11.0f, 11.0f));
+    run(1);
+    TEST_ASSERT_TRUE(cadv_rts_cell_visible(&r, 0, 11.0f, 11.0f));
+    TEST_ASSERT_FALSE(cadv_rts_cell_visible(&r, 0, 70.0f, 70.0f));
+    TEST_ASSERT_FALSE(cadv_rts_cell_visible(&r, 1, 11.0f, 11.0f)); /* the other side sees nothing */
+    TEST_ASSERT_FALSE(cadv_rts_cell_visible(&r, 0, -5.0f, 11.0f));
+    r.u[u].x = 60.0f;
+    r.u[u].z = 60.0f;
+    run(1);
+    TEST_ASSERT_FALSE(cadv_rts_cell_visible(&r, 0, 11.0f, 11.0f)); /* no longer in sight ... */
+    TEST_ASSERT_EQUAL_UINT8(1, r.explored[0][cadv_rts_index(&r.grid, 5, 5)]); /* ... but explored */
+    cadv_rts_add_building(&r, 0, B_YARD, 30, 30);
+    cadv_rts_reveal(&r, 0, 20.0f, 70.0f, 2);
+    TEST_ASSERT_TRUE(cadv_rts_cell_visible(&r, 0, 20.0f, 70.0f));
+    run(1);
+    TEST_ASSERT_TRUE(cadv_rts_cell_visible(&r, 0, 62.0f, 62.0f)); /* the yard sees too */
+}
+
+static void test_rts_kit__neutral_buildings_and_capture(void)
+{
+    int lab = cadv_rts_add_building(&r, CADV_RTS_NEUTRAL, B_POWER, 10, 10);
+    int tank = cadv_rts_add_unit(&r, 0, U_TANK, 30.0f, 22.0f);
+    int hp = r.b[lab].hp;
+    run(200);
+    TEST_ASSERT_EQUAL_INT(hp, r.b[lab].hp); /* idle units leave neutral buildings alone */
+    TEST_ASSERT_EQUAL_INT(CADV_RTS_NEUTRAL, r.b[lab].owner);
+    TEST_ASSERT_EQUAL_INT(lab, cadv_rts_building_at(&r, 10, 10));
+    TEST_ASSERT_EQUAL_INT(-1, cadv_rts_building_at(&r, 0, 0));
+    TEST_ASSERT_EQUAL_INT(-1, cadv_rts_building_at(&r, -1, 0));
+    cadv_rts_capture(&r, lab, 0);
+    TEST_ASSERT_EQUAL_INT(0, r.b[lab].owner);
+    TEST_ASSERT_EQUAL_INT(0, r.grid.owner[cadv_rts_index(&r.grid, 11, 11)]);
+    TEST_ASSERT_EQUAL_INT(100, r.side[0].power_made);
+    cadv_rts_capture(&r, lab, 0); /* already ours: nothing changes */
+    cadv_rts_destroy_building(&r, lab);
+    cadv_rts_capture(&r, lab, 1); /* gone: nothing changes */
+    TEST_ASSERT_EQUAL_INT(0, r.side[0].power_made);
+    (void)tank;
+}
+
+static void test_rts_kit__barracks_and_factory_queues_run_together(void)
+{
+    static const cadv_rts_udef u2[2] = {
+        {"Trooper", 100, 50, 0.05f, 8.0f, 6, 20, 60, false, 0, CADV_BF_BARRACKS, 0, true},
+        {"Tank", 100, 300, 0.08f, 14.0f, 40, 60, 60, false, 0, 0, 0, false},
+    };
+    static const cadv_rts_bdef b2[2] = {
+        {"Barracks", 2, 2, 100, 0, 400, 50, CADV_BF_BARRACKS, 0, 0, 0, 0},
+        {"Factory", 2, 2, 100, 0, 400, 50, CADV_BF_FACTORY, 0, 0, 0, 0},
+    };
+    cadv_rts_init(&r, 40, 40, 2.0f, b2, 2, u2, 2);
+    r.side[0].credits = 1000;
+    TEST_ASSERT_FALSE(cadv_rts_can_train(&r, 0, 0));
+    cadv_rts_add_building(&r, 0, 0, 5, 5);
+    TEST_ASSERT_TRUE(cadv_rts_can_train(&r, 0, 0));
+    TEST_ASSERT_FALSE(cadv_rts_can_train(&r, 0, 1)); /* default: a factory */
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, false, 0));
+    TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, false, 1));
+    TEST_ASSERT_TRUE(cadv_rts_queue(&r, 0, true, 1));
+    r.side[0].credits = 0;
+    TEST_ASSERT_FALSE(cadv_rts_queue(&r, 0, false, 0));
+    TEST_ASSERT_TRUE(r.events[0] & CADV_RTS_EV_BROKE);
+    run(60);
+    TEST_ASSERT_EQUAL_INT(1, cadv_rts_count_units(&r, 0, 0));
+    TEST_ASSERT_EQUAL_INT(1, r.side[0].ready_building); /* both queues advanced together */
+    TEST_ASSERT_TRUE(cadv_rts_cancel(&r, 0, false) == false);
+}
+
+static void test_rts_kit__ai_opponent(void)
+{
+    static const cadv_rts_ai_build plan[] = {{B_POWER, 20, 4}, {B_FACTORY, 20, 8}, {B_REFINERY, 25, 4}, {B_POWER, 2, 38}};
+    static const int train[] = {U_RIFLE, U_TANK};
+    cadv_rts_ai ai;
+    int i;
+    int base;
+    cadv_rts_ai_init(&ai, 1);
+    TEST_ASSERT_EQUAL_INT(1, ai.side);
+    TEST_ASSERT_EQUAL_INT(-1, ai.harvester_def);
+    ai.plan = plan;
+    ai.nplan = 4;
+    ai.train = train;
+    ai.ntrain = 2;
+    ai.harvester_def = U_HARVESTER;
+    ai.income = 50;
+    ai.wave_every = 600;
+    ai.wave_size = 2;
+    ai.wave_max = 3;
+    ai.army_cap = 4;
+    ai.home.x = 22;
+    ai.home.z = 6;
+    ai.target.x = 5;
+    ai.target.z = 35;
+    base = cadv_rts_add_building(&r, 1, B_YARD, 22, 2);
+    TEST_ASSERT_TRUE(base >= 0);
+    r.side[1].credits = 4000;
+    for (i = 0; i < 6000; ++i) {
+        cadv_rts_ai_tick(&r, &ai);
+        cadv_rts_tick(&r);
+    }
+    TEST_ASSERT_EQUAL_INT(2, cadv_rts_count_buildings(&r, 1, B_POWER) + (cadv_rts_building_at(&r, 2, 38) < 0 ? 1 : 0));
+    TEST_ASSERT_EQUAL_INT(1, cadv_rts_count_buildings(&r, 1, B_FACTORY));
+    TEST_ASSERT_EQUAL_INT(1, cadv_rts_count_units(&r, 1, U_HARVESTER));
+    TEST_ASSERT_TRUE(ai.waves_sent >= 1);
+    TEST_ASSERT_TRUE(cadv_rts_ai_army(&r, 1) <= 4 + 2); /* capped (queued units may still land) */
+    TEST_ASSERT_TRUE(ai.wave_size <= 3);
+    /* a lost structure is rebuilt */
+    cadv_rts_destroy_building(&r, cadv_rts_building_at(&r, 20, 8));
+    for (i = 0; i < 3000; ++i) {
+        cadv_rts_ai_tick(&r, &ai);
+        cadv_rts_tick(&r);
+    }
+    TEST_ASSERT_EQUAL_INT(1, cadv_rts_count_buildings(&r, 1, B_FACTORY));
+    /* intruders near home are attacked by idle units */
+    i = cadv_rts_add_unit(&r, 0, U_RIFLE, 46.0f, 14.0f);
+    for (base = 0; base < 4000 && r.u[i].alive; ++base) {
+        cadv_rts_ai_tick(&r, &ai);
+        cadv_rts_tick(&r);
+    }
+    TEST_ASSERT_FALSE(r.u[i].alive);
+    TEST_ASSERT_TRUE(cadv_rts_ai_idle_army(&r, 1) >= 0);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -428,5 +554,9 @@ int main(void)
     RUN_TEST(test_combat_orders_and_defences);
     RUN_TEST(test_capacity_limits);
     RUN_TEST(test_rts_kit__lockstep_hash_equality);
+    RUN_TEST(test_rts_kit__fog_of_war);
+    RUN_TEST(test_rts_kit__neutral_buildings_and_capture);
+    RUN_TEST(test_rts_kit__barracks_and_factory_queues_run_together);
+    RUN_TEST(test_rts_kit__ai_opponent);
     return UNITY_END();
 }

@@ -25,3 +25,10 @@ The portal SHALL award 1 snowflake for winning, +1 if no harvester was lost and 
 #### Scenario: Harvester never lost
 - **WHEN** the player wins without losing a harvester, after 15 minutes
 - **THEN** the result carries 2 snowflakes
+
+### Requirement: Checkpoint
+The portal SHALL record checkpoint 1 once a barracks and a war factory stand; resuming SHALL rebuild the base (yard, two power plants, refinery with harvester, barracks, war factory) with 3000 credits.
+
+#### Scenario: Resume with the base standing
+- **WHEN** the portal starts with checkpoint 1
+- **THEN** six structures and a harvester stand and the side has 3000 credits
