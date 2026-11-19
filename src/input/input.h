@@ -26,6 +26,7 @@ typedef enum cadv_action {
     CADV_ACT_WEAPON_5,
     CADV_ACT_WEAPON_6,
     CADV_ACT_MAP,
+    CADV_ACT_HELP,
     CADV_ACT_COUNT
 } cadv_action;
 
@@ -50,6 +51,7 @@ typedef enum cadv_device_kind {
 
 /* USB HID usage codes for the default keyboard bindings. */
 enum {
+    CADV_KEY_F1 = 58, CADV_KEY_H = 11,
     CADV_KEY_A = 4, CADV_KEY_C = 6, CADV_KEY_D = 7, CADV_KEY_E = 8, CADV_KEY_F = 9,
     CADV_KEY_M = 16, CADV_KEY_Q = 20, CADV_KEY_R = 21, CADV_KEY_S = 22, CADV_KEY_W = 26,
     CADV_KEY_1 = 30, CADV_KEY_5 = 34, CADV_KEY_RETURN = 40, CADV_KEY_ESCAPE = 41,

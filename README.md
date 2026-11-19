@@ -58,6 +58,10 @@ ctest --preset linux-gcc
 ./build/linux-gcc/cadvent
 ```
 
+**F1** (or H, the gamepad's Back button, or the "?" touch button) opens the
+on-screen help for wherever you are: the goal, the controls and tips; the
+game pauses while it is open.
+
 Controls: WASD/arrows + mouse (click to capture the mouse), Space jump,
 C crouch, Shift run, E use, mouse buttons fire (right button: alt-fire or
 claim), 1–6 weapons or spells, Esc leave a portal. On the carpet (Day 2),

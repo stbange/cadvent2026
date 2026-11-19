@@ -49,6 +49,7 @@ add_library(cadv_core STATIC
   src/kits/rts/rts_ai.c
   src/kits/vehicle/flyer.c
   src/kits/vehicle/terrain.c
+  src/portal/help.c
   src/portal/registry.c
   src/portals/p01_sleighed.c
   src/portals/p02_aurora_carpet.c

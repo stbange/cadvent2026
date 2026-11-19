@@ -409,25 +409,7 @@ static void draw_hud(const cadv_hub *h, const cadv_input *input, cadv_ui *ui, bo
             cadv_ui_text_centered(ui, cx, y, 1, white, h->friends->name[i]);
         }
     }
-    if (input && cadv_input_touch_visible(input)) {
-        for (i = 0; i < input->touch_button_count; ++i) {
-            const cadv_touch_button *b = &input->touch_buttons[i];
-            float r = b->r * (float)ui->height;
-            float bx = b->x * (float)ui->width;
-            float by = b->y * (float)ui->height;
-            cadv_ui_rect(ui, bx - r, by - r, 2 * r, 2 * r, cadv_v4(1, 1, 1, b->down ? 0.35f : 0.18f));
-            cadv_ui_text_centered(ui, bx, by - 3, 1, white, b->label);
-        }
-        for (i = 0; i < CADV_MAX_FINGERS; ++i) {
-            const cadv_finger *f = &input->fingers[i];
-            if (f->active && f->role == 0) {
-                float x0 = f->x0 * (float)ui->width;
-                float y0 = f->y0 * (float)ui->height;
-                cadv_ui_rect(ui, x0 - 16, y0 - 16, 32, 32, cadv_v4(1, 1, 1, 0.15f));
-                cadv_ui_rect(ui, f->x * (float)ui->width - 5, f->y * (float)ui->height - 5, 10, 10, cadv_v4(1, 1, 1, 0.4f));
-            }
-        }
-    }
+    (void)input; /* touch buttons are drawn by the app over every view */
 }
 
 void cadv_hub_gfx_draw(cadv_hub_gfx *g, const cadv_hub *h, const cadv_input *input, cadv_scene *sc,

@@ -26,6 +26,8 @@
     onRuntimeInitialized: function () { statusEl.hidden = true; }
   };
   window.addEventListener('error', function () { statusEl.hidden = false; statusEl.textContent = 'Something went wrong. See the console.'; });
+  // F1 opens the game's help, not the browser's.
+  window.addEventListener('keydown', function (e) { if (e.key === 'F1') { e.preventDefault(); } }, true);
 </script>
 {{{ SCRIPT }}}
 </body>

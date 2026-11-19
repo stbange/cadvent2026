@@ -21,5 +21,10 @@ teleport -15 12 -30 0
 wait 5
 hold jump 40
 screenshot p01_roof.ppm
+press help
+wait 12
+screenshot p01_help.ppm
+press help
+wait 12
 press pause
 wait 2

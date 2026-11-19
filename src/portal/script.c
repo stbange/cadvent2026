@@ -9,7 +9,7 @@
 
 static const char *const k_actions[CADV_ACT_COUNT] = {
     "jump", "crouch", "fire", "alt", "use", "radial", "run", "pause",
-    "next", "prev", "w1", "w2", "w3", "w4", "w5", "w6", "map"};
+    "next", "prev", "w1", "w2", "w3", "w4", "w5", "w6", "map", "help"};
 
 int cadv_script_action_from_name(const char *name)
 {

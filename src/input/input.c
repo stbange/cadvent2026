@@ -26,6 +26,8 @@ void cadv_input_init(cadv_input *in)
     cadv_input_bind_key(in, CADV_KEY_ESCAPE, CADV_ACT_PAUSE);
     cadv_input_bind_key(in, CADV_KEY_TAB, CADV_ACT_MAP);
     cadv_input_bind_key(in, CADV_KEY_M, CADV_ACT_MAP);
+    cadv_input_bind_key(in, CADV_KEY_F1, CADV_ACT_HELP);
+    cadv_input_bind_key(in, CADV_KEY_H, CADV_ACT_HELP);
     for (i = 0; i < 6; ++i) {
         cadv_input_bind_key(in, CADV_KEY_1 + i, (cadv_action)(CADV_ACT_WEAPON_1 + i));
     }
@@ -40,7 +42,8 @@ void cadv_input_init(cadv_input *in)
     in->pad_bind[CADV_PAD_WEST] = CADV_ACT_USE;
     in->pad_bind[CADV_PAD_NORTH] = CADV_ACT_RADIAL;
     in->pad_bind[CADV_PAD_START] = CADV_ACT_PAUSE;
-    in->pad_bind[CADV_PAD_BACK] = CADV_ACT_MAP;
+    in->pad_bind[CADV_PAD_BACK] = CADV_ACT_HELP;
+    in->pad_bind[CADV_PAD_DPAD_UP] = CADV_ACT_MAP;
     in->pad_bind[CADV_PAD_LSHOULDER] = CADV_ACT_PREV_WEAPON;
     in->pad_bind[CADV_PAD_RSHOULDER] = CADV_ACT_NEXT_WEAPON;
     in->pad_bind[CADV_PAD_LSTICK] = CADV_ACT_RUN;
@@ -231,6 +234,7 @@ void cadv_input_touch_default_layout(cadv_input *in)
     add_touch_button(in, 0.80f, 0.62f, 0.08f, CADV_ACT_USE, "USE");
     add_touch_button(in, 0.92f, 0.52f, 0.08f, CADV_ACT_FIRE, "FIRE");
     add_touch_button(in, 0.94f, 0.12f, 0.06f, CADV_ACT_PAUSE, "II");
+    add_touch_button(in, 0.82f, 0.12f, 0.06f, CADV_ACT_HELP, "?");
 }
 
 bool cadv_input_touch_visible(const cadv_input *in) { return in->last_device == CADV_DEVICE_TOUCH; }

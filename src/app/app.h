@@ -64,7 +64,14 @@ typedef struct cadv_app {
     char screenshot_path[256];
     bool screenshot_ok;
     bool touch_visible;        /* last reported touch-overlay state */
+    bool help_open;            /* on-screen help shown (simulation paused) */
+    int help_anim;             /* 0..CADV_APP_HELP_ANIM opening slide */
+    int help_hint;             /* ticks left of the "F1 HELP" reminder */
+    int help_page;             /* 0 or 1 (small screens get two pages) */
 } cadv_app;
+
+#define CADV_APP_HELP_ANIM 10
+#define CADV_APP_HELP_HINT 420
 
 /* data_dir: where assets/ live (with trailing slash, may be ""); save_dir: a
  * writable directory for the save file (with trailing slash, may be ""). */

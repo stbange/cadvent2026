@@ -6,6 +6,7 @@
 
 #include "core/log.h"
 #include "core/version.h"
+#include "portal/help.h"
 
 /* ---- events (for scenario scripts) -------------------------------------- */
 
@@ -88,6 +89,7 @@ static void enter_portal(cadv_app *app, int day)
     }
     app->mode = CADV_MODE_PORTAL;
     app->portal_day = day;
+    app->help_hint = CADV_APP_HELP_HINT;
     app->progress.p[day - 1].entered = true;
     cadv_audio_sfx(&app->audio, CADV_SFX_PORTAL, 1.0f, 0.0f);
     emit(app, "portal_entered");
@@ -190,6 +192,7 @@ bool cadv_app_init(cadv_app *app, const cadv_args *args, bool gpu, cadv_gl_profi
     }
     load_save(app);
     cadv_hub_init(&app->hub, &app->progress, &app->friends, app->now, CADV_SEASON_YEAR, args->unlock_all);
+    app->help_hint = CADV_APP_HELP_HINT;
     if (args->script) {
         if (!cadv_script_load(&app->script, args->script)) {
             CADV_ERROR("script error: %s", app->script.error);
@@ -257,6 +260,14 @@ bool cadv_app_query(cadv_app *app, const char *key, double *out)
     }
     if (strcmp(key, "ticks") == 0) {
         *out = (double)app->ticks;
+        return true;
+    }
+    if (strcmp(key, "help.open") == 0) {
+        *out = app->help_open ? 1.0 : 0.0;
+        return true;
+    }
+    if (strcmp(key, "help.hint") == 0) {
+        *out = app->help_hint;
         return true;
     }
     if (strcmp(key, "arena.peak") == 0) {
@@ -339,6 +350,29 @@ void cadv_app_tick(cadv_app *app)
         in = cadv_input_frame_build(&app->input, (float)CADV_TICK_DT);
     }
     ++app->ticks;
+    /* on-screen help: toggled with F1 / H / Back / "?", pauses the world */
+    if (cadv_input_pressed(&in, CADV_ACT_HELP) || (app->help_open && cadv_input_pressed(&in, CADV_ACT_PAUSE))) {
+        app->help_open = !app->help_open;
+        app->help_hint = 0;
+        emit(app, app->help_open ? "help_opened" : "help_closed");
+        if (!app->help_open) {
+            return; /* the closing key press is not passed on (Esc would leave the portal) */
+        }
+    }
+    if (app->help_open) {
+        app->help_anim = app->help_anim < CADV_APP_HELP_ANIM ? app->help_anim + 1 : CADV_APP_HELP_ANIM;
+        if (cadv_input_pressed(&in, CADV_ACT_NEXT_WEAPON) || cadv_input_pressed(&in, CADV_ACT_PREV_WEAPON)) {
+            app->help_page = 1 - app->help_page;
+        }
+        return;
+    }
+    app->help_page = 0;
+    if (app->help_anim > 0) {
+        --app->help_anim;
+    }
+    if (app->help_hint > 0) {
+        --app->help_hint;
+    }
     if (app->mode == CADV_MODE_HUB) {
         handle_hub_events(app, cadv_hub_tick(&app->hub, &in));
     } else {
@@ -413,6 +447,16 @@ static void render(cadv_app *app, int width, int height, float alpha)
                           app->args.unlock_all);
     } else {
         cadv_portal_view_get(app->portal_day)->draw(app->session.state, &app->scene, &app->cam, &app->ui, alpha);
+    }
+    cadv_help_draw_touch(&app->ui, &app->input);
+    if (app->help_hint > 0 && app->help_anim == 0) {
+        cadv_help_draw_hint(&app->ui, app->input.last_device, (float)app->help_hint / 60.0f);
+    }
+    if (app->help_open || app->help_anim > 0) {
+        int day = app->mode == CADV_MODE_PORTAL ? app->portal_day : 0;
+        const cadv_help *h = cadv_help_get(day, day > 0 && cadv_portal_get(day)->implemented);
+        cadv_help_draw(&app->ui, h, app->input.last_device, ((float)app->help_anim + (app->help_open ? alpha : -alpha)) / (float)CADV_APP_HELP_ANIM,
+                       (int)app->ticks, app->help_page);
     }
     view.camera = &app->cam;
     view.scene = &app->scene;

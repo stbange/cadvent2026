@@ -43,6 +43,7 @@ endfunction()
 
 cadv_scenario(hub_reach_portal_24 hub_reach_portal_24.gts "" "--date 2026-11-30")
 cadv_scenario(teaser teaser.gts "" "--date 2026-11-18")
+cadv_scenario(help help.gts "" "--unlock-all --portal 1")
 add_test(NAME game.package_runs_from_archive
   COMMAND ${CMAKE_COMMAND} -DCADVENT=$<TARGET_FILE:cadvent> -DSRC=${PROJECT_SOURCE_DIR}
           -DWORK=${CMAKE_CURRENT_BINARY_DIR} -DSCRIPT=${GAME_DIR}/package_smoke.gts
