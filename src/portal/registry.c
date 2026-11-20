@@ -9,6 +9,7 @@
 #include "portals/p04_ice_tomb.h"
 #include "portals/p05_hearthguard.h"
 #include "portals/p06_iron_yule.h"
+#include "portals/p07_tinsel_strike.h"
 #include "portals/test_range.h"
 
 static const cadv_mark_def k_marks_01[] = {
@@ -173,7 +174,9 @@ static const cadv_portal_desc k_portals[CADV_PORTAL_COUNT] = {
     {6, "p06_iron_yule", "Iron Yule", "MechWarrior 2 (1995)", CADV_CAP_SOLO | CADV_CAP_VERSUS | CADV_CAP_XR_FULL,
      true, CADV_P06_STATE_SIZE, cadv_p06_init, cadv_p06_tick, cadv_p06_result, cadv_p06_query, cadv_p06_bot,
      cadv_p06_teleport, MARKS(06)},
-    CADV_TEST_RANGE_DESC(7, "p07_tinsel_strike", "Tinsel Strike", "Counter-Strike (1999)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_FULL, MARKS(07)),
+    {7, "p07_tinsel_strike", "Tinsel Strike", "Counter-Strike (1999)", CADV_CAP_SOLO | CADV_CAP_COOP | CADV_CAP_VERSUS | CADV_CAP_XR_FULL,
+     true, CADV_P07_STATE_SIZE, cadv_p07_init, cadv_p07_tick, cadv_p07_result, cadv_p07_query, cadv_p07_bot,
+     cadv_p07_teleport, MARKS(07)},
     CADV_TEST_RANGE_DESC(8, "p08_cascade", "Cascade", "Half-Life (1998)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_FULL, MARKS(08)),
     CADV_TEST_RANGE_DESC(9, "p09_skifrost", "Skifrost", "Starsiege: Tribes (1998)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_SEATED, MARKS(09)),
     CADV_TEST_RANGE_DESC(10, "p10_neon_syndic", "Neon Syndic", "Syndicate Wars (1996)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_SEATED, MARKS(10)),

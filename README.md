@@ -82,8 +82,12 @@ bash. In the walker cockpit (Day 6): W/S set the throttle, A/D turn the legs,
 the mouse twists the torso and aims, the left button fires the selected
 weapon group (1-3, 4 toggles chain fire), the right button fires everything,
 Space fires the jump jets, C is all stop, Shift centres the torso and E asks
-Santa Claude for a coolant drop; watch the heat gauge. Gamepads and touch
-screens work too (touch controls appear automatically).
+Santa Claude for a coolant drop; watch the heat gauge. In the market of
+Glühstadt (Day 7): 6 opens the buy menu during buy time (Q/wheel moves, fire
+buys), 1-5 pick rifle, pistol, candy cane, flashbang and smoke, hold E to
+plant or defuse the glitter bomb, Shift walks quietly, C crouches for a
+steadier aim, Tab shows the scoreboard. Gamepads and touch screens work too
+(touch controls appear automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,
 `--unlock-all` opens every portal (development; does not touch your real

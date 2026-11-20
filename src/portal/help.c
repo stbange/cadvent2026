@@ -104,6 +104,19 @@ static const cadv_help k_day6 = {
     4,
 };
 
+static const cadv_help k_day7 = {
+    "DAY 7 - TINSEL STRIKE",
+    "WIN A BEST-OF-9 IN THE MARKET OF GLUHSTADT (FIRST TO 5 ROUNDS). AS THE HUMBUG SYNDICATE, PLANT THE GLITTER "
+    "BOMB AT SITE A OR B; AS THE NUTCRACKER GUARD, STOP THEM OR DEFUSE IT. SIDES SWITCH AFTER ROUND 4.",
+    {MOVE, LOOK, {"L-MOUSE", "RT", "FIRE / THROW"}, {"R-MOUSE", "LT", "SNIPER SCOPE"}, {"1 2 3", "LB / RB", "RIFLE/PISTOL/CANE"},
+     {"4 / 5", "-", "FLASHBANG / SMOKE"}, {"6", "Y", "BUY MENU (BUY TIME)"}, {"E (HOLD)", "X", "PLANT / DEFUSE"},
+     {"SHIFT", "L3", "WALK QUIETLY"}, {"C", "B", "CROUCH: STEADY AIM"}, {"SPACE", "A", "JUMP"}, {"TAB", "D-UP", "SCOREBOARD"}, HELP},
+    13,
+    {"RECOIL CLIMBS THE SAME WAY EVERY SPRAY: PULL DOWN, OR TAP.", "MOVING AND JUMPING SPOIL YOUR AIM; STOP BEFORE YOU SHOOT.",
+     "RUNNING FOOTSTEPS GIVE YOU AWAY. SMOKE BLOCKS THE BOTS' VIEW.", "WIN THE MATCH AND THE TREE CAN BE CLIMBED TO THE STAR."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -135,6 +148,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day5;
     case 6:
         return &k_day6;
+    case 7:
+        return &k_day7;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }

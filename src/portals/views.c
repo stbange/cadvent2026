@@ -7,6 +7,7 @@
 #include "portals/p04_ice_tomb_gfx.h"
 #include "portals/p05_hearthguard_gfx.h"
 #include "portals/p06_iron_yule_gfx.h"
+#include "portals/p07_tinsel_strike_gfx.h"
 #include "portals/test_range_gfx.h"
 
 static const cadv_portal_view k_test_range_view = {cadv_test_range_gpu_init, cadv_test_range_gpu_free,
@@ -20,6 +21,7 @@ const cadv_portal_view *cadv_portal_view_get(int day)
     static const cadv_portal_view k_p04 = {cadv_p04_gpu_init, cadv_p04_gpu_free, cadv_p04_draw};
     static const cadv_portal_view k_p05 = {cadv_p05_gpu_init, cadv_p05_gpu_free, cadv_p05_draw};
     static const cadv_portal_view k_p06 = {cadv_p06_gpu_init, cadv_p06_gpu_free, cadv_p06_draw};
+    static const cadv_portal_view k_p07 = {cadv_p07_gpu_init, cadv_p07_gpu_free, cadv_p07_draw};
     switch (day) {
     case 1:
         return &k_p01;
@@ -33,6 +35,8 @@ const cadv_portal_view *cadv_portal_view_get(int day)
         return &k_p05;
     case 6:
         return &k_p06;
+    case 7:
+        return &k_p07;
     default:
         return day < 1 || day > CADV_PORTAL_COUNT ? NULL : &k_test_range_view;
     }
