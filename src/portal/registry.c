@@ -12,6 +12,7 @@
 #include "portals/p07_tinsel_strike.h"
 #include "portals/p08_cascade.h"
 #include "portals/p09_skifrost.h"
+#include "portals/p10_neon_syndic.h"
 #include "portals/test_range.h"
 
 static const cadv_mark_def k_marks_01[] = {
@@ -185,7 +186,9 @@ static const cadv_portal_desc k_portals[CADV_PORTAL_COUNT] = {
     {9, "p09_skifrost", "Skifrost", "Starsiege: Tribes (1998)", CADV_CAP_SOLO | CADV_CAP_COOP | CADV_CAP_VERSUS | CADV_CAP_XR_SEATED,
      true, CADV_P09_STATE_SIZE, cadv_p09_init, cadv_p09_tick, cadv_p09_result, cadv_p09_query, cadv_p09_bot,
      cadv_p09_teleport, MARKS(09)},
-    CADV_TEST_RANGE_DESC(10, "p10_neon_syndic", "Neon Syndic", "Syndicate Wars (1996)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_SEATED, MARKS(10)),
+    {10, "p10_neon_syndic", "Neon Syndic", "Syndicate Wars (1996)", CADV_CAP_SOLO | CADV_CAP_COOP | CADV_CAP_XR_SEATED,
+     true, CADV_P10_STATE_SIZE, cadv_p10_init, cadv_p10_tick, cadv_p10_result, cadv_p10_query, cadv_p10_bot,
+     cadv_p10_teleport, MARKS(10)},
     CADV_TEST_RANGE_DESC(11, "p11_deep_thaw", "Deep Thaw", "Descent (1995)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_FULL, MARKS(11)),
     CADV_TEST_RANGE_DESC(12, "p12_below_the_chapel", "Below the Chapel", "Diablo (1996)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_XR_SEATED, MARKS(12)),
     CADV_TEST_RANGE_DESC(13, "p13_hellfrost_station", "Hellfrost Station", "Doom (1993)", CADV_CAP_SOLO|CADV_CAP_COOP|CADV_CAP_VERSUS|CADV_CAP_XR_FULL, MARKS(13)),

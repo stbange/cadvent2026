@@ -142,6 +142,19 @@ static const cadv_help k_day9 = {
     4,
 };
 
+static const cadv_help k_day10 = {
+    "DAY 10 - NEON SYNDIC",
+    "LEAD A CELL OF THE SLEEPLESS CHOIR THROUGH NIVALIS AT NIGHT: HACK THE THREE HALCYON BROADCAST RELAYS (MARKET, "
+    "FACTORY, TOWER), THEN HOLD THE PLAZA UNTIL THE VTOL LANDS.",
+    {MOVE, LOOK, {"L-MOUSE", "RT", "FIRE"}, {"R-MOUSE (HOLD)", "LT", "CHARM BEACON"}, {"1 - 3", "LB / RB", "WEAPONS"},
+     {"Q (HOLD)", "Y (HOLD)", "ORDER RING"}, {"4 / 5 / 6", "RING", "FOLLOW/HOLD/ATTACK"}, {"SHIFT / C / TAB", "L3 / B / UP", "OVERCLOCK"},
+     {"E", "X", "USE / HACK / CAR"}, HELP, LEAVE},
+    11,
+    {"HACK: PRESS E WHEN THE MARKER CROSSES THE GAP.", "THE BEACON SWAYS GUARDS ONCE YOUR CROWD IS BIG.",
+     "AN EMPTY OVERCLOCK POOL CRASHES YOU FOR A WHILE.", "RAM THE ROAD BARRIER AT SPEED, OR BLAST IT."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -179,6 +192,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day8;
     case 9:
         return &k_day9;
+    case 10:
+        return &k_day10;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }

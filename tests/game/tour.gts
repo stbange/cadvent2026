@@ -10,7 +10,7 @@ screenshot tour_apse.ppm
 teleport 6 0 6 3.1416
 wait 5
 screenshot tour_legends.ppm
-teleport 14 0 -19 -1.5708
+teleport 14 0 -24 -1.5708
 move 0 1 40
 wait_until mode == 1 60
 wait 10

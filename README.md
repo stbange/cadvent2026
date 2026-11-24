@@ -93,7 +93,11 @@ wait; hold E at a wall charger to refill the suit. On Snowglobe Basin
 (Day 9): hold Space to ski (no friction downhill), the right button fires the
 jetpack, 1-3 pick disc, chaingun and grenades, E at the inventory station
 swaps armour (and skips the training), C drops the flag, Tab shows the
-scoreboard. Gamepads and touch screens work too
+scoreboard. In Nivalis (Day 10): hold the right button for the Charm
+Beacon, 1-3 pick minigun, laser and gauss, hold Q for the order ring (4/5/6
+are follow, hold and attack), Shift, C and Tab toggle the speed, aim and
+awareness overclock, E hacks relays (press again when the marker crosses the
+gap) and gets in and out of the hover-car. Gamepads and touch screens work too
 (touch controls appear automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,

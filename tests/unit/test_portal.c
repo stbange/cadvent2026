@@ -28,7 +28,7 @@ static void test_portal_catalog__catalogue_completeness(void)
         TEST_ASSERT_EQUAL_INT(day, d->day);
         TEST_ASSERT_NOT_NULL(d->title);
         TEST_ASSERT_TRUE(d->caps & CADV_CAP_SOLO);
-        TEST_ASSERT_EQUAL(day <= 9, d->implemented); /* real games ship one by one */
+        TEST_ASSERT_EQUAL(day <= 10, d->implemented); /* real games ship one by one */
     }
     TEST_ASSERT_EQUAL_STRING("Iron Yule", cadv_portal_get(6)->title);
     TEST_ASSERT_EQUAL_STRING("Polar Alert", cadv_portal_get(24)->title);
@@ -95,8 +95,8 @@ static void test_portal_framework__story_mode_selection(void)
 {
     cadv_portal_result r;
     cfg.difficulty = CADV_DIFF_STORY;
-    cfg.day = 10;
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(10), &cfg));
+    cfg.day = 11;
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(11), &cfg));
     play_bot(20000);
     r = cadv_session_result(&s);
     TEST_ASSERT_EQUAL_INT(CADV_OUTCOME_WON, r.outcome);
@@ -115,7 +115,7 @@ static void test_shining_stars__star_reachable_in_story_mode(void)
 static void test_bot_wins_on_hard(void)
 {
     cfg.difficulty = CADV_DIFF_HARD;
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(10), &cfg)); /* test range */
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(11), &cfg)); /* test range */
     play_bot(30000);
     TEST_ASSERT_EQUAL_INT(CADV_OUTCOME_WON, cadv_session_result(&s).outcome);
 }
@@ -127,7 +127,7 @@ static void test_queries_teleport_and_quit(void)
     const char *keys[] = {"player.x", "player.y", "player.z", "player.yaw", "player.health", "enemies.alive",
                           "star.taken", "keys", "outcome", "marks", "ticks", "door.open"};
     size_t i;
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(10), &cfg));
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(11), &cfg));
     for (i = 0; i < sizeof keys / sizeof keys[0]; ++i) {
         TEST_ASSERT_TRUE(s.desc->query(s.state, keys[i], &v));
     }
@@ -147,7 +147,7 @@ static void test_death_loses_and_locked_door_message(void)
     cadv_input_frame in;
     int i;
     memset(&in, 0, sizeof in);
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(10), &cfg));
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(11), &cfg));
     /* walk to the locked door and use it */
     s.desc->teleport(s.state, 0, 0, -7.0f, 0.0f);
     in.pressed = CADV_ACT_BIT(CADV_ACT_USE);
@@ -164,8 +164,8 @@ static void test_checkpoint_spawn(void)
 {
     double v;
     cfg.checkpoint = 1;
-    cfg.day = 10;
-    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(10), &cfg));
+    cfg.day = 11;
+    TEST_ASSERT_TRUE(cadv_session_start(&s, cadv_portal_get(11), &cfg));
     s.desc->query(s.state, "keys", &v);
     TEST_ASSERT_EQUAL_DOUBLE(1.0, v);
     TEST_ASSERT_EQUAL_INT(1, cadv_session_result(&s).checkpoint);
