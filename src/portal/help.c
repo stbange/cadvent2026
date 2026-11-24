@@ -117,6 +117,19 @@ static const cadv_help k_day7 = {
     4,
 };
 
+static const cadv_help k_day8 = {
+    "DAY 8 - CASCADE",
+    "YOU ARE INES KOWALCZYK, ARRIVING AT POLARIS DEEP ON TEST DAY. WHEN THE RESONANCE TEST GOES WRONG, GET THROUGH "
+    "THE RUINS, PAST THE BLACKICE DETAIL, AND REVERSE THE BEAM AT THE SURFACE ANTENNA ARRAY.",
+    {MOVE, LOOK, {"L-MOUSE", "RT", "FIRE / SWING / THROW"}, {"R-MOUSE", "LT", "CROSSBOW ZOOM"}, {"1 - 5", "LB / RB", "WEAPONS"},
+     {"E", "X", "USE / TALK"}, {"E (HOLD)", "X", "SUIT CHARGER"}, {"SPACE", "A", "JUMP"}, {"C", "B", "CROUCH"}, {"SHIFT", "L3", "RUN"},
+     HELP, LEAVE},
+    12,
+    {"LOOK AT SOMEONE AND PRESS E: FOLLOW ME / WAIT HERE.", "THE RETINA SCANNER ONLY OPENS FOR A SCIENTIST.",
+     "THE SUIT SOAKS UP DAMAGE; WALL CHARGERS REFILL IT.", "KEEP ALL THREE SCIENTISTS ALIVE FOR A SNOWFLAKE."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -150,6 +163,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day6;
     case 7:
         return &k_day7;
+    case 8:
+        return &k_day8;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }

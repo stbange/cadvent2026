@@ -86,7 +86,10 @@ Santa Claude for a coolant drop; watch the heat gauge. In the market of
 Glühstadt (Day 7): 6 opens the buy menu during buy time (Q/wheel moves, fire
 buys), 1-5 pick rifle, pistol, candy cane, flashbang and smoke, hold E to
 plant or defuse the glitter bomb, Shift walks quietly, C crouches for a
-steadier aim, Tab shows the scoreboard. Gamepads and touch screens work too
+steadier aim, Tab shows the scoreboard. At Polaris Deep (Day 8): 1-5 pick
+the ice axe, pistol, shotgun, crossbow and grenades, the right button zooms
+the crossbow, E uses things and, looking at someone, tells them to follow or
+wait; hold E at a wall charger to refill the suit. Gamepads and touch screens work too
 (touch controls appear automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,

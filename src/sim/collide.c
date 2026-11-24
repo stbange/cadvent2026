@@ -156,15 +156,29 @@ bool cadv_ray_cylinder(cadv_vec3 o, cadv_vec3 d, cadv_vec3 base, float radius, f
         return false;
     }
     s = (-b - cadv_sqrtf(disc)) / (2.0f * a);
-    if (s < 0.0f) {
-        s = (-b + cadv_sqrtf(disc)) / (2.0f * a);
-    }
-    if (s < 0.0f || s > max_dist) {
-        return false;
-    }
-    y = o.y + d.y * s;
-    if (y < base.y || y > base.y + height) {
-        return false;
+    {
+        float s_out = (-b + cadv_sqrtf(disc)) / (2.0f * a);
+        if (s < 0.0f) {
+            s = s_out;
+        }
+        if (s < 0.0f || s > max_dist) {
+            return false;
+        }
+        y = o.y + d.y * s;
+        if (y < base.y || y > base.y + height) {
+            /* the side is missed: the ray may still come in through the top
+             * (looking down on something short) or the bottom cap */
+            float cap = y > base.y + height ? base.y + height : base.y;
+            float tc;
+            if (cadv_absf(d.y) < 1e-6f) {
+                return false;
+            }
+            tc = (cap - o.y) / d.y;
+            if (tc < s || tc > s_out || tc < 0.0f || tc > max_dist) {
+                return false;
+            }
+            s = tc;
+        }
     }
     *t = s;
     return true;

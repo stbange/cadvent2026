@@ -59,7 +59,7 @@ bool cadv_segment_sphere(cadv_vec3 a, cadv_vec3 b, cadv_vec3 c, float r);
 
 /* ---- walk grid ---------------------------------------------------------------------------- */
 
-#define CADV_NAV_MAX 64
+#define CADV_NAV_MAX 96
 
 typedef struct cadv_nav_cell {
     int8_t x, z;
