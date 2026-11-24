@@ -89,7 +89,11 @@ plant or defuse the glitter bomb, Shift walks quietly, C crouches for a
 steadier aim, Tab shows the scoreboard. At Polaris Deep (Day 8): 1-5 pick
 the ice axe, pistol, shotgun, crossbow and grenades, the right button zooms
 the crossbow, E uses things and, looking at someone, tells them to follow or
-wait; hold E at a wall charger to refill the suit. Gamepads and touch screens work too
+wait; hold E at a wall charger to refill the suit. On Snowglobe Basin
+(Day 9): hold Space to ski (no friction downhill), the right button fires the
+jetpack, 1-3 pick disc, chaingun and grenades, E at the inventory station
+swaps armour (and skips the training), C drops the flag, Tab shows the
+scoreboard. Gamepads and touch screens work too
 (touch controls appear automatically).
 
 Useful flags (see `--help`): `--date 2026-12-05` pretends it is that day,

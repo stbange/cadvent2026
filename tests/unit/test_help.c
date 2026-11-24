@@ -23,7 +23,8 @@ static void test_on_screen_help__every_world_has_a_help_page(void)
     TEST_ASSERT_EQUAL_STRING("DAY 6 - IRON YULE", cadv_help_get(6, true)->title);
     TEST_ASSERT_EQUAL_STRING("DAY 7 - TINSEL STRIKE", cadv_help_get(7, true)->title);
     TEST_ASSERT_EQUAL_STRING("DAY 8 - CASCADE", cadv_help_get(8, true)->title);
-    TEST_ASSERT_EQUAL_STRING("PRACTICE RANGE", cadv_help_get(9, false)->title);
+    TEST_ASSERT_EQUAL_STRING("DAY 9 - SKIFROST", cadv_help_get(9, true)->title);
+    TEST_ASSERT_EQUAL_STRING("PRACTICE RANGE", cadv_help_get(10, false)->title);
     for (day = 0; day <= CADV_PORTAL_COUNT; ++day) {
         const cadv_portal_desc *d = day > 0 ? cadv_portal_get(day) : NULL;
         const cadv_help *h = cadv_help_get(day, d && d->implemented);
@@ -40,7 +41,7 @@ static void test_on_screen_help__every_world_has_a_help_page(void)
         }
         TEST_ASSERT_TRUE(has_help_key); /* every page tells how to close it */
         if (d && d->implemented) {
-            TEST_ASSERT_NOT_EQUAL(cadv_help_get(9, false), h); /* shipped days have their own page */
+            TEST_ASSERT_NOT_EQUAL(cadv_help_get(10, false), h); /* shipped days have their own page */
         }
     }
 }
@@ -75,7 +76,7 @@ static void test_help_word_wrap(void)
 static void test_help_draws_one_page_on_a_normal_screen(void)
 {
     int day;
-    for (day = 0; day <= 8; ++day) {
+    for (day = 0; day <= 9; ++day) {
         cadv_ui_reset(&ui, 400, 225);
         TEST_ASSERT_EQUAL_INT(1, cadv_help_draw(&ui, cadv_help_get(day, true), CADV_DEVICE_KBM, 1.0f, 0, 0));
         TEST_ASSERT_TRUE(ui.count > 100);

@@ -130,6 +130,18 @@ static const cadv_help k_day8 = {
     4,
 };
 
+static const cadv_help k_day9 = {
+    "DAY 9 - SKIFROST",
+    "THE RIME WOLVES AGAINST THE EMBER OWLS ON SNOWGLOBE BASIN. SKI DOWN THE HILLS, JET OVER THE RISES, STEAL THEIR "
+    "FLAG AND BRING IT HOME. FIRST TO FIVE CAPTURES, THEN CARRY THE TROPHY STAR HOME.",
+    {MOVE, LOOK, {"L-MOUSE", "RT", "FIRE"}, {"R-MOUSE", "LT", "JETPACK"}, {"SPACE (HOLD)", "A", "SKI / JUMP"}, {"1 - 3", "LB / RB", "WEAPONS"},
+     {"E", "X", "STATION / SKIP"}, {"C", "B", "DROP THE FLAG"}, {"TAB", "Y", "SCOREBOARD"}, HELP, LEAVE},
+    11,
+    {"HOLD SKI ON DOWNHILLS: NO FRICTION, ALL SPEED.", "THE DISC IS SLOW: AIM WHERE THEY WILL BE.",
+     "DESTROY THEIR GENERATOR TO SHUT DOWN THE TURRET.", "CAPTURE AT OVER 150 KM/H FOR A SNOWFLAKE."},
+    4,
+};
+
 static const cadv_help k_range = {
     "PRACTICE RANGE",
     "THIS PORTAL'S GAME IS STILL THAWING. UNTIL IT SHIPS, THE PRACTICE RANGE STANDS IN: DEFEAT THE "
@@ -165,6 +177,8 @@ const cadv_help *cadv_help_get(int day, bool implemented)
         return &k_day7;
     case 8:
         return &k_day8;
+    case 9:
+        return &k_day9;
     default:
         return &k_range; /* GCOVR_EXCL_LINE: every shipped day has its own page */
     }
